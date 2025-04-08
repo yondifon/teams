@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/jetstream/compare/v5.3.5...5.x)
+## [Unreleased](https://github.com/laravel/jetstream/compare/v5.3.6...5.x)
+
+## [v5.3.6](https://github.com/laravel/jetstream/compare/v5.3.5...v5.3.6) - 2025-03-24
+
+* Specify event to be faked for test by [@riesjart](https://github.com/riesjart) in https://github.com/laravel/jetstream/pull/1569
 
 ## [v5.3.5](https://github.com/laravel/jetstream/compare/v5.3.4...v5.3.5) - 2025-02-20
 
