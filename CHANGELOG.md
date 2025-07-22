@@ -1,6 +1,10 @@
 # Release Notes
 
-## [Unreleased](https://github.com/laravel/jetstream/compare/v5.3.7...5.x)
+## [Unreleased](https://github.com/laravel/jetstream/compare/v5.3.8...5.x)
+
+## [v5.3.8](https://github.com/laravel/jetstream/compare/v5.3.7...v5.3.8) - 2025-07-18
+
+* [5.x] Bump Livewire to 3.6.4 by [@PerryvanderMeer](https://github.com/PerryvanderMeer) in https://github.com/laravel/jetstream/pull/1578
 
 ## [v5.3.7](https://github.com/laravel/jetstream/compare/v5.3.6...v5.3.7) - 2025-06-16
 
