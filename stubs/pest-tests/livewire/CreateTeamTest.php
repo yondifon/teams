@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\User;
-use Laravel\Jetstream\Http\Livewire\CreateTeamForm;
 use Livewire\Livewire;
+use Malico\Teams\Http\Livewire\CreateTeamForm;
 
 test('teams can be created', function () {
     $this->actingAs($user = User::factory()->withPersonalTeam()->create());

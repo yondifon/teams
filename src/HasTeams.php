@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Jetstream;
+namespace Malico\Teams;
 
 use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
@@ -29,7 +29,7 @@ trait HasTeams
             $this->switchTeam($this->personalTeam());
         }
 
-        return $this->belongsTo(Jetstream::teamModel(), 'current_team_id');
+        return $this->belongsTo(Teams::teamModel(), 'current_team_id');
     }
 
     /**
@@ -70,7 +70,7 @@ trait HasTeams
      */
     public function ownedTeams()
     {
-        return $this->hasMany(Jetstream::teamModel());
+        return $this->hasMany(Teams::teamModel());
     }
 
     /**
@@ -80,10 +80,10 @@ trait HasTeams
      */
     public function teams()
     {
-        return $this->belongsToMany(Jetstream::teamModel(), Jetstream::membershipModel())
-                        ->withPivot('role')
-                        ->withTimestamps()
-                        ->as('membership');
+        return $this->belongsToMany(Teams::teamModel(), Teams::membershipModel())
+            ->withPivot('role')
+            ->withTimestamps()
+            ->as('membership');
     }
 
     /**
@@ -132,7 +132,7 @@ trait HasTeams
      * Get the role that the user has on the team.
      *
      * @param  mixed  $team
-     * @return \Laravel\Jetstream\Role|null
+     * @return \Malico\Teams\Role|null
      */
     public function teamRole($team)
     {
@@ -150,14 +150,13 @@ trait HasTeams
             ->membership
             ->role;
 
-        return $role ? Jetstream::findRole($role) : null;
+        return $role ? Teams::findRole($role) : null;
     }
 
     /**
      * Determine if the user has the given role on the given team.
      *
      * @param  mixed  $team
-     * @param  string  $role
      * @return bool
      */
     public function hasTeamRole($team, string $role)
@@ -166,7 +165,7 @@ trait HasTeams
             return true;
         }
 
-        return $this->belongsToTeam($team) && optional(Jetstream::findRole($team->users->where(
+        return $this->belongsToTeam($team) && optional(Teams::findRole($team->users->where(
             'id', $this->id
         )->first()->membership->role))->key === $role;
     }
@@ -194,7 +193,6 @@ trait HasTeams
      * Determine if the user has the given permission on the given team.
      *
      * @param  mixed  $team
-     * @param  string  $permission
      * @return bool
      */
     public function hasTeamPermission($team, string $permission)

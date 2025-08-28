@@ -20,7 +20,7 @@
 
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <!-- Teams Dropdown -->
-                @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
+                @if (Malico\Teams\Teams::hasTeamFeatures())
                     <div class="ms-3 relative">
                         <x-dropdown align="right" width="60">
                             <x-slot name="trigger">
@@ -47,7 +47,7 @@
                                         {{ __('Team Settings') }}
                                     </x-dropdown-link>
 
-                                    @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+                                    @can('create', Malico\Teams\Teams::newTeamModel())
                                         <x-dropdown-link href="{{ route('teams.create') }}">
                                             {{ __('Create New Team') }}
                                         </x-dropdown-link>
@@ -75,7 +75,7 @@
                 <div class="ms-3 relative">
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
-                            @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                            @if (Malico\Teams\Teams::managesProfilePhotos())
                                 <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-gray-300 transition">
                                     <img class="size-8 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
                                 </button>
@@ -102,7 +102,7 @@
                                 {{ __('Profile') }}
                             </x-dropdown-link>
 
-                            @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                            @if (Malico\Teams\Teams::hasApiFeatures())
                                 <x-dropdown-link href="{{ route('api-tokens.index') }}">
                                     {{ __('API Tokens') }}
                                 </x-dropdown-link>
@@ -147,7 +147,7 @@
         <!-- Responsive Settings Options -->
         <div class="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
             <div class="flex items-center px-4">
-                @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
+                @if (Malico\Teams\Teams::managesProfilePhotos())
                     <div class="shrink-0 me-3">
                         <img class="size-10 rounded-full object-cover" src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" />
                     </div>
@@ -165,7 +165,7 @@
                     {{ __('Profile') }}
                 </x-responsive-nav-link>
 
-                @if (Laravel\Jetstream\Jetstream::hasApiFeatures())
+                @if (Malico\Teams\Teams::hasApiFeatures())
                     <x-responsive-nav-link href="{{ route('api-tokens.index') }}" :active="request()->routeIs('api-tokens.index')">
                         {{ __('API Tokens') }}
                     </x-responsive-nav-link>
@@ -182,7 +182,7 @@
                 </form>
 
                 <!-- Team Management -->
-                @if (Laravel\Jetstream\Jetstream::hasTeamFeatures())
+                @if (Malico\Teams\Teams::hasTeamFeatures())
                     <div class="border-t border-gray-200 dark:border-gray-600"></div>
 
                     <div class="block px-4 py-2 text-xs text-gray-400">
@@ -194,7 +194,7 @@
                         {{ __('Team Settings') }}
                     </x-responsive-nav-link>
 
-                    @can('create', Laravel\Jetstream\Jetstream::newTeamModel())
+                    @can('create', Malico\Teams\Teams::newTeamModel())
                         <x-responsive-nav-link href="{{ route('teams.create') }}" :active="request()->routeIs('teams.create')">
                             {{ __('Create New Team') }}
                         </x-responsive-nav-link>

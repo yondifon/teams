@@ -139,13 +139,13 @@
 
                                 <div class="flex items-center">
                                     <!-- Manage Team Member Role -->
-                                    @if (Gate::check('updateTeamMember', $team) && Laravel\Jetstream\Jetstream::hasRoles())
+                                    @if (Gate::check('updateTeamMember', $team) && Malico\Teams\Teams::hasRoles())
                                         <button class="ms-2 text-sm text-gray-400 underline" wire:click="manageRole('{{ $user->id }}')">
-                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name }}
+                                            {{ Malico\Teams\Teams::findRole($user->membership->role)->name }}
                                         </button>
-                                    @elseif (Laravel\Jetstream\Jetstream::hasRoles())
+                                    @elseif (Malico\Teams\Teams::hasRoles())
                                         <div class="ms-2 text-sm text-gray-400">
-                                            {{ Laravel\Jetstream\Jetstream::findRole($user->membership->role)->name }}
+                                            {{ Malico\Teams\Teams::findRole($user->membership->role)->name }}
                                         </div>
                                     @endif
 

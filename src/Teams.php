@@ -35,7 +35,6 @@ class Teams
      */
     public static $permissions = [];
 
-
     /**
      * The user model that should be used by Teams.
      *
@@ -84,7 +83,6 @@ class Teams
     /**
      * Find the role with the given key.
      *
-     * @param  string  $key
      * @return \Malico\Teams\Role
      */
     public static function findRole(string $key)
@@ -95,18 +93,15 @@ class Teams
     /**
      * Define a role.
      *
-     * @param  string  $key
-     * @param  string  $name
-     * @param  array  $permissions
      * @return \Malico\Teams\Role
      */
     public static function role(string $key, string $name, array $permissions)
     {
         static::$permissions = collect(array_merge(static::$permissions, $permissions))
-                                    ->unique()
-                                    ->sort()
-                                    ->values()
-                                    ->all();
+            ->unique()
+            ->sort()
+            ->values()
+            ->all();
 
         return tap(new Role($key, $name, $permissions), function ($role) use ($key) {
             static::$roles[$key] = $role;
@@ -126,19 +121,12 @@ class Teams
     /**
      * Return the permissions in the given list that are actually defined permissions for the application.
      *
-     * @param  array  $permissions
      * @return array
      */
     public static function validPermissions(array $permissions)
     {
         return array_values(array_intersect($permissions, static::$permissions));
     }
-
-
-
-
-
-
 
     /**
      * Determine if the application is supporting team features.
@@ -173,8 +161,6 @@ class Teams
                 static::hasTeamFeatures();
     }
 
-
-
     /**
      * Find a user instance by the given ID.
      *
@@ -189,7 +175,6 @@ class Teams
     /**
      * Find a user instance by the given email address or fail.
      *
-     * @param  string  $email
      * @return mixed
      */
     public static function findUserByEmailOrFail(string $email)
@@ -222,7 +207,6 @@ class Teams
     /**
      * Specify the user model that should be used by Teams.
      *
-     * @param  string  $model
      * @return static
      */
     public static function useUserModel(string $model)
@@ -257,7 +241,6 @@ class Teams
     /**
      * Specify the team model that should be used by Teams.
      *
-     * @param  string  $model
      * @return static
      */
     public static function useTeamModel(string $model)
@@ -280,7 +263,6 @@ class Teams
     /**
      * Specify the membership model that should be used by Teams.
      *
-     * @param  string  $model
      * @return static
      */
     public static function useMembershipModel(string $model)
@@ -303,7 +285,6 @@ class Teams
     /**
      * Specify the team invitation model that should be used by Teams.
      *
-     * @param  string  $model
      * @return static
      */
     public static function useTeamInvitationModel(string $model)
@@ -316,7 +297,6 @@ class Teams
     /**
      * Register a class / callback that should be used to create teams.
      *
-     * @param  string  $class
      * @return void
      */
     public static function createTeamsUsing(string $class)
@@ -327,7 +307,6 @@ class Teams
     /**
      * Register a class / callback that should be used to update team names.
      *
-     * @param  string  $class
      * @return void
      */
     public static function updateTeamNamesUsing(string $class)
@@ -338,7 +317,6 @@ class Teams
     /**
      * Register a class / callback that should be used to add team members.
      *
-     * @param  string  $class
      * @return void
      */
     public static function addTeamMembersUsing(string $class)
@@ -349,7 +327,6 @@ class Teams
     /**
      * Register a class / callback that should be used to add team members.
      *
-     * @param  string  $class
      * @return void
      */
     public static function inviteTeamMembersUsing(string $class)
@@ -360,7 +337,6 @@ class Teams
     /**
      * Register a class / callback that should be used to remove team members.
      *
-     * @param  string  $class
      * @return void
      */
     public static function removeTeamMembersUsing(string $class)
@@ -371,7 +347,6 @@ class Teams
     /**
      * Register a class / callback that should be used to delete teams.
      *
-     * @param  string  $class
      * @return void
      */
     public static function deleteTeamsUsing(string $class)
@@ -382,7 +357,6 @@ class Teams
     /**
      * Register a class / callback that should be used to delete users.
      *
-     * @param  string  $class
      * @return void
      */
     public static function deleteUsersUsing(string $class)

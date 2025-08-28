@@ -1,10 +1,10 @@
 <?php
 
-namespace Laravel\Jetstream\Http\Livewire;
+namespace Malico\Teams\Http\Livewire;
 
 use Illuminate\Support\Facades\Auth;
-use Laravel\Jetstream\Contracts\UpdatesTeamNames;
 use Livewire\Component;
+use Malico\Teams\Contracts\UpdatesTeamNames;
 
 class UpdateTeamNameForm extends Component
 {
@@ -38,7 +38,6 @@ class UpdateTeamNameForm extends Component
     /**
      * Update the team's name.
      *
-     * @param  \Laravel\Jetstream\Contracts\UpdatesTeamNames  $updater
      * @return void
      */
     public function updateTeamName(UpdatesTeamNames $updater)

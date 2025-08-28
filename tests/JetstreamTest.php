@@ -1,43 +1,43 @@
 <?php
 
-namespace Laravel\Jetstream\Tests;
+namespace Malico\Teams\Tests;
 
-use Laravel\Jetstream\Jetstream;
+use Malico\Teams\Teams;
 
-class JetstreamTest extends OrchestraTestCase
+class TeamsTest extends OrchestraTestCase
 {
     public function test_roles_can_be_registered()
     {
-        Jetstream::$permissions = [];
-        Jetstream::$roles = [];
+        Teams::$permissions = [];
+        Teams::$roles = [];
 
-        Jetstream::role('admin', 'Admin', [
+        Teams::role('admin', 'Admin', [
             'read',
             'create',
         ])->description('Admin Description');
 
-        Jetstream::role('editor', 'Editor', [
+        Teams::role('editor', 'Editor', [
             'read',
             'update',
             'delete',
         ])->description('Editor Description');
 
-        $this->assertTrue(Jetstream::hasPermissions());
+        $this->assertTrue(Teams::hasPermissions());
 
         $this->assertEquals([
             'create',
             'delete',
             'read',
             'update',
-        ], Jetstream::$permissions);
+        ], Teams::$permissions);
     }
 
     public function test_roles_can_be_json_serialized()
     {
-        Jetstream::$permissions = [];
-        Jetstream::$roles = [];
+        Teams::$permissions = [];
+        Teams::$roles = [];
 
-        $role = Jetstream::role('admin', 'Admin', [
+        $role = Teams::role('admin', 'Admin', [
             'read',
             'create',
         ])->description('Admin Description');
@@ -52,9 +52,9 @@ class JetstreamTest extends OrchestraTestCase
 
     public function test_has_team_feature_will_always_return_false_when_team_is_not_enabled()
     {
-        $this->assertFalse(Jetstream::hasTeamFeatures());
-        $this->assertFalse(Jetstream::userHasTeamFeatures(new Fixtures\User));
-        $this->assertFalse(Jetstream::userHasTeamFeatures(new Fixtures\Admin));
+        $this->assertFalse(Teams::hasTeamFeatures());
+        $this->assertFalse(Teams::userHasTeamFeatures(new Fixtures\User));
+        $this->assertFalse(Teams::userHasTeamFeatures(new Fixtures\Admin));
     }
 
     /**
@@ -62,8 +62,8 @@ class JetstreamTest extends OrchestraTestCase
      */
     public function test_has_team_feature_can_be_determined_when_team_is_enabled()
     {
-        $this->assertTrue(Jetstream::hasTeamFeatures());
-        $this->assertTrue(Jetstream::userHasTeamFeatures(new Fixtures\User));
-        $this->assertFalse(Jetstream::userHasTeamFeatures(new Fixtures\Admin));
+        $this->assertTrue(Teams::hasTeamFeatures());
+        $this->assertTrue(Teams::userHasTeamFeatures(new Fixtures\User));
+        $this->assertFalse(Teams::userHasTeamFeatures(new Fixtures\Admin));
     }
 }

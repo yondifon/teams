@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Actions\Jetstream\DeleteUser;
+use App\Actions\Teams\DeleteUser;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Jetstream\Jetstream;
+use Malico\Teams\Teams;
 
-class JetstreamServiceProvider extends ServiceProvider
+class TeamsServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -24,7 +24,7 @@ class JetstreamServiceProvider extends ServiceProvider
     {
         $this->configurePermissions();
 
-        Jetstream::deleteUsersUsing(DeleteUser::class);
+        Teams::deleteUsersUsing(DeleteUser::class);
 
         Vite::prefetch(concurrency: 3);
     }
@@ -34,9 +34,9 @@ class JetstreamServiceProvider extends ServiceProvider
      */
     protected function configurePermissions(): void
     {
-        Jetstream::defaultApiTokenPermissions(['read']);
+        Teams::defaultApiTokenPermissions(['read']);
 
-        Jetstream::permissions([
+        Teams::permissions([
             'create',
             'read',
             'update',

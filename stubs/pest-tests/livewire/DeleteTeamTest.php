@@ -2,8 +2,8 @@
 
 use App\Models\Team;
 use App\Models\User;
-use Laravel\Jetstream\Http\Livewire\DeleteTeamForm;
 use Livewire\Livewire;
+use Malico\Teams\Http\Livewire\DeleteTeamForm;
 
 test('teams can be deleted', function () {
     $this->actingAs($user = User::factory()->withPersonalTeam()->create());

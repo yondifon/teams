@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Jetstream;
+namespace Malico\Teams;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,6 +23,6 @@ class TeamInvitation extends Model
      */
     public function team()
     {
-        return $this->belongsTo(Jetstream::teamModel());
+        return $this->belongsTo(Teams::teamModel());
     }
 }

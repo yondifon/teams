@@ -5,10 +5,10 @@ namespace Tests\Feature;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
-use Laravel\Jetstream\Features;
-use Laravel\Jetstream\Http\Livewire\TeamMemberManager;
-use Laravel\Jetstream\Mail\TeamInvitation;
 use Livewire\Livewire;
+use Malico\Teams\Features;
+use Malico\Teams\Http\Livewire\TeamMemberManager;
+use Malico\Teams\Mail\TeamInvitation;
 use Tests\TestCase;
 
 class InviteTeamMemberTest extends TestCase

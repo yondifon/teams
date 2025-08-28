@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Laravel\Jetstream\Membership as JetstreamMembership;
+use Malico\Teams\Membership as TeamsMembership;
 
-class Membership extends JetstreamMembership
+class Membership extends TeamsMembership
 {
     /**
      * Indicates if the IDs are auto-incrementing.

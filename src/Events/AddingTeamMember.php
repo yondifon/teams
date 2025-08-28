@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Jetstream\Events;
+namespace Malico\Teams\Events;
 
 use Illuminate\Foundation\Events\Dispatchable;
 

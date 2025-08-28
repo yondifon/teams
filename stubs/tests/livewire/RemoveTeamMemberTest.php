@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Jetstream\Http\Livewire\TeamMemberManager;
 use Livewire\Livewire;
+use Malico\Teams\Http\Livewire\TeamMemberManager;
 use Tests\TestCase;
 
 class RemoveTeamMemberTest extends TestCase

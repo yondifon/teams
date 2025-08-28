@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - master
-      - '*.x'
+      - "*.x"
   pull_request:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 jobs:
   tests:
@@ -49,7 +49,7 @@ jobs:
       fail-fast: true
       matrix:
         stack: [inertia, livewire]
-        laravel: ['11.x-dev', 'dev-master']
+        laravel: ["11.x-dev", "dev-master"]
 
     name: Test Stubs - Laravel ${{ matrix.laravel }} - ${{ matrix.stack }}
 
@@ -72,9 +72,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          path: 'jetstream'
+          path: "jetstream"
 
-      - name: Install Jetstream
+      - name: Install Teams
         run: |
           composer update "laravel/jetstream" --prefer-dist --no-interaction --no-progress -W
           php artisan jetstream:install ${{ matrix.stack }} --teams --api --verification --pest

@@ -1,8 +1,8 @@
 <?php
 
 use App\Models\User;
-use Laravel\Jetstream\Http\Livewire\TeamMemberManager;
 use Livewire\Livewire;
+use Malico\Teams\Http\Livewire\TeamMemberManager;
 
 test('team members can be removed from teams', function () {
     $this->actingAs($user = User::factory()->withPersonalTeam()->create());

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Jetstream\Http\Livewire;
+namespace Malico\Teams\Http\Livewire;
 
 use Livewire\Component;
 

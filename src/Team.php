@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Jetstream;
+namespace Malico\Teams;
 
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,7 +13,7 @@ abstract class Team extends Model
      */
     public function owner()
     {
-        return $this->belongsTo(Jetstream::userModel(), 'user_id');
+        return $this->belongsTo(Teams::userModel(), 'user_id');
     }
 
     /**
@@ -33,10 +33,10 @@ abstract class Team extends Model
      */
     public function users()
     {
-        return $this->belongsToMany(Jetstream::userModel(), Jetstream::membershipModel())
-                        ->withPivot('role')
-                        ->withTimestamps()
-                        ->as('membership');
+        return $this->belongsToMany(Teams::userModel(), Teams::membershipModel())
+            ->withPivot('role')
+            ->withTimestamps()
+            ->as('membership');
     }
 
     /**
@@ -53,7 +53,6 @@ abstract class Team extends Model
     /**
      * Determine if the given email address belongs to a user on the team.
      *
-     * @param  string  $email
      * @return bool
      */
     public function hasUserWithEmail(string $email)
@@ -82,7 +81,7 @@ abstract class Team extends Model
      */
     public function teamInvitations()
     {
-        return $this->hasMany(Jetstream::teamInvitationModel());
+        return $this->hasMany(Teams::teamInvitationModel());
     }
 
     /**
@@ -110,10 +109,10 @@ abstract class Team extends Model
     public function purge()
     {
         $this->owner()->where('current_team_id', $this->id)
-                ->update(['current_team_id' => null]);
+            ->update(['current_team_id' => null]);
 
         $this->users()->where('current_team_id', $this->id)
-                ->update(['current_team_id' => null]);
+            ->update(['current_team_id' => null]);
 
         $this->users()->detach();
 

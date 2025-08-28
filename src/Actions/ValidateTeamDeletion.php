@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Jetstream\Actions;
+namespace Malico\Teams\Actions;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;

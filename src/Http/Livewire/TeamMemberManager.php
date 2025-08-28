@@ -1,16 +1,14 @@
 <?php
 
-namespace Laravel\Jetstream\Http\Livewire;
+namespace Malico\Teams\Http\Livewire;
 
 use Illuminate\Support\Facades\Auth;
-use Laravel\Jetstream\Actions\UpdateTeamMemberRole;
-use Laravel\Jetstream\Contracts\AddsTeamMembers;
-use Laravel\Jetstream\Contracts\InvitesTeamMembers;
-use Laravel\Jetstream\Contracts\RemovesTeamMembers;
-use Laravel\Jetstream\Features;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Role;
 use Livewire\Component;
+use Malico\Teams\Actions\UpdateTeamMemberRole;
+use Malico\Teams\Contracts\AddsTeamMembers;
+use Malico\Teams\Contracts\InvitesTeamMembers;
+use Malico\Teams\Contracts\RemovesTeamMembers;
+use Malico\Teams\Role;
 
 class TeamMemberManager extends Component
 {
@@ -93,7 +91,7 @@ class TeamMemberManager extends Component
     {
         $this->resetErrorBag();
 
-        if (Features::sendsTeamInvitations()) {
+        if (Teams::sendsTeamInvitations()) {
             app(InvitesTeamMembers::class)->invite(
                 $this->user,
                 $this->team,
@@ -128,7 +126,7 @@ class TeamMemberManager extends Component
     public function cancelTeamInvitation($invitationId)
     {
         if (! empty($invitationId)) {
-            $model = Jetstream::teamInvitationModel();
+            $model = Teams::teamInvitationModel();
 
             $model::whereKey($invitationId)->delete();
         }
@@ -145,14 +143,13 @@ class TeamMemberManager extends Component
     public function manageRole($userId)
     {
         $this->currentlyManagingRole = true;
-        $this->managingRoleFor = Jetstream::findUserByIdOrFail($userId);
+        $this->managingRoleFor = Teams::findUserByIdOrFail($userId);
         $this->currentRole = $this->managingRoleFor->teamRole($this->team)->key;
     }
 
     /**
      * Save the role for the user being managed.
      *
-     * @param  \Laravel\Jetstream\Actions\UpdateTeamMemberRole  $updater
      * @return void
      */
     public function updateRole(UpdateTeamMemberRole $updater)
@@ -182,7 +179,6 @@ class TeamMemberManager extends Component
     /**
      * Remove the currently authenticated user from the team.
      *
-     * @param  \Laravel\Jetstream\Contracts\RemovesTeamMembers  $remover
      * @return \Illuminate\Http\RedirectResponse
      */
     public function leaveTeam(RemovesTeamMembers $remover)
@@ -197,7 +193,7 @@ class TeamMemberManager extends Component
 
         $this->team = $this->team->fresh();
 
-        return redirect(config('fortify.home'));
+        return redirect(config('teams.home', '/dashboard'));
     }
 
     /**
@@ -216,7 +212,6 @@ class TeamMemberManager extends Component
     /**
      * Remove a team member from the team.
      *
-     * @param  \Laravel\Jetstream\Contracts\RemovesTeamMembers  $remover
      * @return void
      */
     public function removeTeamMember(RemovesTeamMembers $remover)
@@ -224,7 +219,7 @@ class TeamMemberManager extends Component
         $remover->remove(
             $this->user,
             $this->team,
-            $user = Jetstream::findUserByIdOrFail($this->teamMemberIdBeingRemoved)
+            $user = Teams::findUserByIdOrFail($this->teamMemberIdBeingRemoved)
         );
 
         $this->confirmingTeamMemberRemoval = false;
@@ -251,7 +246,7 @@ class TeamMemberManager extends Component
      */
     public function getRolesProperty()
     {
-        return collect(Jetstream::$roles)->transform(function ($role) {
+        return collect(Teams::$roles)->transform(function ($role) {
             return with($role->jsonSerialize(), function ($data) {
                 return (new Role(
                     $data['key'],

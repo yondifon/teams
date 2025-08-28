@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Jetstream\Http\Livewire\UpdateTeamNameForm;
 use Livewire\Livewire;
+use Malico\Teams\Http\Livewire\UpdateTeamNameForm;
 use Tests\TestCase;
 
 class UpdateTeamNameTest extends TestCase

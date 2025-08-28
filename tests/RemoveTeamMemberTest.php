@@ -1,20 +1,20 @@
 <?php
 
-namespace Laravel\Jetstream\Tests;
+namespace Malico\Teams\Tests;
 
-use App\Actions\Jetstream\CreateTeam;
-use App\Actions\Jetstream\RemoveTeamMember;
+use App\Actions\Teams\CreateTeam;
+use App\Actions\Teams\RemoveTeamMember;
 use App\Models\Team;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
-use Laravel\Jetstream\Events\RemovingTeamMember;
-use Laravel\Jetstream\Events\TeamMemberRemoved;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Tests\Fixtures\TeamPolicy;
-use Laravel\Jetstream\Tests\Fixtures\User;
+use Malico\Teams\Events\RemovingTeamMember;
+use Malico\Teams\Events\TeamMemberRemoved;
+use Malico\Teams\Teams;
+use Malico\Teams\Tests\Fixtures\TeamPolicy;
+use Malico\Teams\Tests\Fixtures\User;
 
 class RemoveTeamMemberTest extends OrchestraTestCase
 {
@@ -24,7 +24,7 @@ class RemoveTeamMemberTest extends OrchestraTestCase
 
         Gate::policy(Team::class, TeamPolicy::class);
 
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
     }
 
     public function test_team_members_can_be_removed()

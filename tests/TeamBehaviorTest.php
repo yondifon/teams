@@ -1,15 +1,15 @@
 <?php
 
-namespace Laravel\Jetstream\Tests;
+namespace Malico\Teams\Tests;
 
-use App\Actions\Jetstream\CreateTeam;
+use App\Actions\Teams\CreateTeam;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Team;
-use Laravel\Jetstream\Tests\Fixtures\TeamPolicy;
-use Laravel\Jetstream\Tests\Fixtures\User;
 use Laravel\Sanctum\Sanctum;
 use Laravel\Sanctum\TransientToken;
+use Malico\Teams\Team;
+use Malico\Teams\Teams;
+use Malico\Teams\Tests\Fixtures\TeamPolicy;
+use Malico\Teams\Tests\Fixtures\User;
 
 class TeamBehaviorTest extends OrchestraTestCase
 {
@@ -18,7 +18,7 @@ class TeamBehaviorTest extends OrchestraTestCase
         parent::defineEnvironment($app);
 
         Gate::policy(\App\Models\Team::class, TeamPolicy::class);
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
     }
 
     public function test_team_relationship_methods()
@@ -58,7 +58,7 @@ class TeamBehaviorTest extends OrchestraTestCase
         $this->assertFalse($otherUser->hasTeamPermission($team, 'foo'));
 
         // Add the other user to the team...
-        Jetstream::role('editor', 'Editor', ['foo']);
+        Teams::role('editor', 'Editor', ['foo']);
 
         $otherUser->teams()->attach($team, ['role' => 'editor']);
         $otherUser = $otherUser->fresh();
@@ -86,7 +86,7 @@ class TeamBehaviorTest extends OrchestraTestCase
 
     public function test_has_team_permission_checks_token_permissions()
     {
-        Jetstream::role('admin', 'Administrator', ['foo']);
+        Teams::role('admin', 'Administrator', ['foo']);
 
         $action = new CreateTeam;
 

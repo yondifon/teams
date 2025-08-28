@@ -1,18 +1,18 @@
 <?php
 
-namespace Laravel\Jetstream\Tests;
+namespace Malico\Teams\Tests;
 
-use App\Actions\Jetstream\AddTeamMember;
-use App\Actions\Jetstream\CreateTeam;
+use App\Actions\Teams\AddTeamMember;
+use App\Actions\Teams\CreateTeam;
 use App\Models\Team;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Membership;
-use Laravel\Jetstream\Tests\Fixtures\TeamPolicy;
-use Laravel\Jetstream\Tests\Fixtures\User;
 use Laravel\Sanctum\TransientToken;
+use Malico\Teams\Membership;
+use Malico\Teams\Teams;
+use Malico\Teams\Tests\Fixtures\TeamPolicy;
+use Malico\Teams\Tests\Fixtures\User;
 
 class AddTeamMemberTest extends OrchestraTestCase
 {
@@ -24,12 +24,12 @@ class AddTeamMemberTest extends OrchestraTestCase
 
         Gate::policy(Team::class, TeamPolicy::class);
 
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
     }
 
     public function test_team_members_can_be_added()
     {
-        Jetstream::role('admin', 'Admin', ['foo']);
+        Teams::role('admin', 'Admin', ['foo']);
 
         $team = $this->createTeam();
 

@@ -1,14 +1,14 @@
 <?php
 
-namespace Laravel\Jetstream\Tests;
+namespace Malico\Teams\Tests;
 
-use App\Actions\Jetstream\CreateTeam;
+use App\Actions\Teams\CreateTeam;
 use App\Models\Team;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Tests\Fixtures\TeamPolicy;
-use Laravel\Jetstream\Tests\Fixtures\User;
 use Laravel\Sanctum\TransientToken;
+use Malico\Teams\Teams;
+use Malico\Teams\Tests\Fixtures\TeamPolicy;
+use Malico\Teams\Tests\Fixtures\User;
 
 class TeamMemberControllerTest extends OrchestraTestCase
 {
@@ -20,13 +20,13 @@ class TeamMemberControllerTest extends OrchestraTestCase
         $app['config']->set('jetstream.features', ['teams']);
 
         Gate::policy(Team::class, TeamPolicy::class);
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
     }
 
     public function test_team_member_permissions_can_be_updated()
     {
-        Jetstream::role('admin', 'Admin', ['foo', 'bar']);
-        Jetstream::role('editor', 'Editor', ['baz', 'qux']);
+        Teams::role('admin', 'Admin', ['foo', 'bar']);
+        Teams::role('editor', 'Editor', ['baz', 'qux']);
 
         $team = $this->createTeam();
 

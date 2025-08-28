@@ -3,10 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\TeamInvitation as JetstreamTeamInvitation;
+use Malico\Teams\TeamInvitation as TeamsTeamInvitation;
+use Malico\Teams\Teams;
 
-class TeamInvitation extends JetstreamTeamInvitation
+class TeamInvitation extends TeamsTeamInvitation
 {
     /**
      * The attributes that are mass assignable.
@@ -23,6 +23,6 @@ class TeamInvitation extends JetstreamTeamInvitation
      */
     public function team(): BelongsTo
     {
-        return $this->belongsTo(Jetstream::teamModel());
+        return $this->belongsTo(Teams::teamModel());
     }
 }

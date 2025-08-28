@@ -1,17 +1,17 @@
 <?php
 
-namespace Laravel\Jetstream\Tests;
+namespace Malico\Teams\Tests;
 
-use App\Actions\Jetstream\CreateTeam;
-use App\Actions\Jetstream\DeleteTeam;
+use App\Actions\Teams\CreateTeam;
+use App\Actions\Teams\DeleteTeam;
 use App\Models\Team;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
-use Laravel\Jetstream\Actions\ValidateTeamDeletion;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Tests\Fixtures\TeamPolicy;
-use Laravel\Jetstream\Tests\Fixtures\User;
+use Malico\Teams\Actions\ValidateTeamDeletion;
+use Malico\Teams\Teams;
+use Malico\Teams\Tests\Fixtures\TeamPolicy;
+use Malico\Teams\Tests\Fixtures\User;
 
 class DeleteTeamTest extends OrchestraTestCase
 {
@@ -20,7 +20,7 @@ class DeleteTeamTest extends OrchestraTestCase
         parent::defineEnvironment($app);
 
         Gate::policy(Team::class, TeamPolicy::class);
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
     }
 
     public function test_team_can_be_deleted()
@@ -36,7 +36,7 @@ class DeleteTeamTest extends OrchestraTestCase
 
     public function test_team_deletion_can_be_validated()
     {
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
 
         $team = $this->createTeam();
 
@@ -51,7 +51,7 @@ class DeleteTeamTest extends OrchestraTestCase
     {
         $this->expectException(ValidationException::class);
 
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
 
         $team = $this->createTeam();
 
@@ -66,7 +66,7 @@ class DeleteTeamTest extends OrchestraTestCase
     {
         $this->expectException(AuthorizationException::class);
 
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
 
         $team = $this->createTeam();
 

@@ -1,13 +1,13 @@
 <?php
 
-namespace Laravel\Jetstream\Tests;
+namespace Malico\Teams\Tests;
 
-use App\Actions\Jetstream\CreateTeam;
+use App\Actions\Teams\CreateTeam;
 use App\Models\Team;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Tests\Fixtures\TeamPolicy;
-use Laravel\Jetstream\Tests\Fixtures\User;
+use Malico\Teams\Teams;
+use Malico\Teams\Tests\Fixtures\TeamPolicy;
+use Malico\Teams\Tests\Fixtures\User;
 
 class CurrentTeamControllerTest extends OrchestraTestCase
 {
@@ -21,7 +21,7 @@ class CurrentTeamControllerTest extends OrchestraTestCase
         ]);
 
         Gate::policy(Team::class, TeamPolicy::class);
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
     }
 
     public function test_can_switch_to_team_the_user_belongs_to()

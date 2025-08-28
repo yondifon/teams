@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Actions\Jetstream;
+namespace App\Actions\Teams;
 
 use App\Models\Team;
-use Laravel\Jetstream\Contracts\DeletesTeams;
+use Malico\Teams\Contracts\DeletesTeams;
 
 class DeleteTeam implements DeletesTeams
 {

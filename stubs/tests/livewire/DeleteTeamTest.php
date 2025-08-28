@@ -5,8 +5,8 @@ namespace Tests\Feature;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Jetstream\Http\Livewire\DeleteTeamForm;
 use Livewire\Livewire;
+use Malico\Teams\Http\Livewire\DeleteTeamForm;
 use Tests\TestCase;
 
 class DeleteTeamTest extends TestCase

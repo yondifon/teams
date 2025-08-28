@@ -1,8 +1,7 @@
 <?php
 
-namespace Laravel\Jetstream\Console;
+namespace Malico\Teams\Console;
 
-use Exception;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\PromptsForMissingInput;
 use Illuminate\Filesystem\Filesystem;
@@ -43,7 +42,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
      *
      * @var string
      */
-    protected $description = 'Install the Jetstream components and resources';
+    protected $description = 'Install the Teams components and resources';
 
     /**
      * Execute the console command.
@@ -62,22 +61,16 @@ class InstallCommand extends Command implements PromptsForMissingInput
         $this->callSilent('vendor:publish', ['--tag' => 'jetstream-config', '--force' => true]);
         $this->callSilent('vendor:publish', ['--tag' => 'jetstream-migrations', '--force' => true]);
 
-        $this->callSilent('vendor:publish', ['--tag' => 'fortify-config', '--force' => true]);
-        $this->callSilent('vendor:publish', ['--tag' => 'fortify-support', '--force' => true]);
-        $this->callSilent('vendor:publish', ['--tag' => 'fortify-migrations', '--force' => true]);
 
         // Storage...
         $this->callSilent('storage:link');
 
-        $this->replaceInFile('/home', '/dashboard', config_path('fortify.php'));
 
         if (file_exists(resource_path('views/welcome.blade.php'))) {
             $this->replaceInFile('/home', '/dashboard', resource_path('views/welcome.blade.php'));
             $this->replaceInFile('Home', 'Dashboard', resource_path('views/welcome.blade.php'));
         }
 
-        // Fortify Provider...
-        ServiceProvider::addProviderToBootstrapFile('App\Providers\FortifyServiceProvider');
 
         // Configure Session...
         $this->configureSession();
@@ -89,7 +82,6 @@ class InstallCommand extends Command implements PromptsForMissingInput
 
         // Configure Email Verification...
         if ($this->option('verification')) {
-            $this->replaceInFile('// Features::emailVerification(),', 'Features::emailVerification(),', config_path('fortify.php'));
         }
 
         // Install Stack...
@@ -132,7 +124,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
     }
 
     /**
-     * Configure the session driver for Jetstream.
+     * Configure the session driver for Teams.
      *
      * @return void
      */
@@ -178,8 +170,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
         copy(__DIR__.'/../../stubs/livewire/vite.config.js', base_path('vite.config.js'));
 
         // Directories...
-        (new Filesystem)->ensureDirectoryExists(app_path('Actions/Fortify'));
-        (new Filesystem)->ensureDirectoryExists(app_path('Actions/Jetstream'));
+        (new Filesystem)->ensureDirectoryExists(app_path('Actions/Teams'));
         (new Filesystem)->ensureDirectoryExists(app_path('View/Components'));
         (new Filesystem)->ensureDirectoryExists(resource_path('css'));
         (new Filesystem)->ensureDirectoryExists(resource_path('markdown'));
@@ -196,14 +187,14 @@ class InstallCommand extends Command implements PromptsForMissingInput
         copy(__DIR__.'/../../stubs/resources/markdown/policy.md', resource_path('markdown/policy.md'));
 
         // Service Providers...
-        copy(__DIR__.'/../../stubs/app/Providers/JetstreamServiceProvider.php', $provider = app_path('Providers/JetstreamServiceProvider.php'));
+        copy(__DIR__.'/../../stubs/app/Providers/TeamsServiceProvider.php', $provider = app_path('Providers/TeamsServiceProvider.php'));
 
         $this->replaceInFile([
             PHP_EOL.'use Illuminate\Support\Facades\Vite;',
             PHP_EOL.PHP_EOL.'        Vite::prefetch(concurrency: 3);',
         ], '', $provider);
 
-        ServiceProvider::addProviderToBootstrapFile('App\Providers\JetstreamServiceProvider');
+        ServiceProvider::addProviderToBootstrapFile('App\Providers\TeamsServiceProvider');
 
         // Models...
         copy(__DIR__.'/../../stubs/app/Models/User.php', app_path('Models/User.php'));
@@ -212,9 +203,7 @@ class InstallCommand extends Command implements PromptsForMissingInput
         copy(__DIR__.'/../../database/factories/UserFactory.php', base_path('database/factories/UserFactory.php'));
 
         // Actions...
-        copy(__DIR__.'/../../stubs/app/Actions/Fortify/CreateNewUser.php', app_path('Actions/Fortify/CreateNewUser.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Fortify/UpdateUserProfileInformation.php', app_path('Actions/Fortify/UpdateUserProfileInformation.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Jetstream/DeleteUser.php', app_path('Actions/Jetstream/DeleteUser.php'));
+        copy(__DIR__.'/../../stubs/app/Actions/Teams/DeleteUser.php', app_path('Actions/Teams/DeleteUser.php'));
 
         // Components...
         (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/livewire/resources/views/components', resource_path('views/components'));
@@ -375,8 +364,7 @@ EOF;
         copy(__DIR__.'/../../stubs/inertia/jsconfig.json', base_path('jsconfig.json'));
 
         // Directories...
-        (new Filesystem)->ensureDirectoryExists(app_path('Actions/Fortify'));
-        (new Filesystem)->ensureDirectoryExists(app_path('Actions/Jetstream'));
+        (new Filesystem)->ensureDirectoryExists(app_path('Actions/Teams'));
         (new Filesystem)->ensureDirectoryExists(resource_path('css'));
         (new Filesystem)->ensureDirectoryExists(resource_path('js/Components'));
         (new Filesystem)->ensureDirectoryExists(resource_path('js/Layouts'));
@@ -394,8 +382,8 @@ EOF;
         copy(__DIR__.'/../../stubs/resources/markdown/policy.md', resource_path('markdown/policy.md'));
 
         // Service Providers...
-        copy(__DIR__.'/../../stubs/app/Providers/JetstreamServiceProvider.php', app_path('Providers/JetstreamServiceProvider.php'));
-        ServiceProvider::addProviderToBootstrapFile('App\Providers\JetstreamServiceProvider');
+        copy(__DIR__.'/../../stubs/app/Providers/TeamsServiceProvider.php', app_path('Providers/TeamsServiceProvider.php'));
+        ServiceProvider::addProviderToBootstrapFile('App\Providers\TeamsServiceProvider');
 
         // Middleware...
         (new Filesystem)->ensureDirectoryExists(app_path('Http/Middleware'));
@@ -417,9 +405,7 @@ EOF;
         copy(__DIR__.'/../../database/factories/UserFactory.php', base_path('database/factories/UserFactory.php'));
 
         // Actions...
-        copy(__DIR__.'/../../stubs/app/Actions/Fortify/CreateNewUser.php', app_path('Actions/Fortify/CreateNewUser.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Fortify/UpdateUserProfileInformation.php', app_path('Actions/Fortify/UpdateUserProfileInformation.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Jetstream/DeleteUser.php', app_path('Actions/Jetstream/DeleteUser.php'));
+        copy(__DIR__.'/../../stubs/app/Actions/Teams/DeleteUser.php', app_path('Actions/Teams/DeleteUser.php'));
 
         // Blade Views...
         copy(__DIR__.'/../../stubs/inertia/resources/views/app.blade.php', resource_path('views/app.blade.php'));
@@ -534,12 +520,12 @@ EOF;
         $this->replaceInFile('// Features::teams([\'invitations\' => true])', 'Features::teams([\'invitations\' => true])', config_path('jetstream.php'));
 
         // Directories...
-        (new Filesystem)->ensureDirectoryExists(app_path('Actions/Jetstream'));
+        (new Filesystem)->ensureDirectoryExists(app_path('Actions/Teams'));
         (new Filesystem)->ensureDirectoryExists(app_path('Events'));
         (new Filesystem)->ensureDirectoryExists(app_path('Policies'));
 
         // Service Providers...
-        copy(__DIR__.'/../../stubs/app/Providers/JetstreamWithTeamsServiceProvider.php', app_path('Providers/JetstreamServiceProvider.php'));
+        copy(__DIR__.'/../../stubs/app/Providers/TeamsWithTeamsServiceProvider.php', app_path('Providers/TeamsServiceProvider.php'));
 
         // Models...
         copy(__DIR__.'/../../stubs/app/Models/Membership.php', app_path('Models/Membership.php'));
@@ -548,15 +534,14 @@ EOF;
         copy(__DIR__.'/../../stubs/app/Models/UserWithTeams.php', app_path('Models/User.php'));
 
         // Actions...
-        copy(__DIR__.'/../../stubs/app/Actions/Jetstream/AddTeamMember.php', app_path('Actions/Jetstream/AddTeamMember.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Jetstream/CreateTeam.php', app_path('Actions/Jetstream/CreateTeam.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Jetstream/DeleteTeam.php', app_path('Actions/Jetstream/DeleteTeam.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Jetstream/DeleteUserWithTeams.php', app_path('Actions/Jetstream/DeleteUser.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Jetstream/InviteTeamMember.php', app_path('Actions/Jetstream/InviteTeamMember.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Jetstream/RemoveTeamMember.php', app_path('Actions/Jetstream/RemoveTeamMember.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Jetstream/UpdateTeamName.php', app_path('Actions/Jetstream/UpdateTeamName.php'));
+        copy(__DIR__.'/../../stubs/app/Actions/Teams/AddTeamMember.php', app_path('Actions/Teams/AddTeamMember.php'));
+        copy(__DIR__.'/../../stubs/app/Actions/Teams/CreateTeam.php', app_path('Actions/Teams/CreateTeam.php'));
+        copy(__DIR__.'/../../stubs/app/Actions/Teams/DeleteTeam.php', app_path('Actions/Teams/DeleteTeam.php'));
+        copy(__DIR__.'/../../stubs/app/Actions/Teams/DeleteUserWithTeams.php', app_path('Actions/Teams/DeleteUser.php'));
+        copy(__DIR__.'/../../stubs/app/Actions/Teams/InviteTeamMember.php', app_path('Actions/Teams/InviteTeamMember.php'));
+        copy(__DIR__.'/../../stubs/app/Actions/Teams/RemoveTeamMember.php', app_path('Actions/Teams/RemoveTeamMember.php'));
+        copy(__DIR__.'/../../stubs/app/Actions/Teams/UpdateTeamName.php', app_path('Actions/Teams/UpdateTeamName.php'));
 
-        copy(__DIR__.'/../../stubs/app/Actions/Fortify/CreateNewUserWithTeams.php', app_path('Actions/Fortify/CreateNewUser.php'));
 
         // Policies...
         (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/app/Policies', app_path('Policies'));
@@ -736,7 +721,6 @@ EOF;
     /**
      * Update the "package.json" file.
      *
-     * @param  callable  $callback
      * @param  bool  $dev
      * @return void
      */
@@ -795,7 +779,6 @@ EOF;
     /**
      * Remove Tailwind dark classes from the given files.
      *
-     * @param  \Symfony\Component\Finder\Finder  $finder
      * @return void
      */
     protected function removeDarkClasses(Finder $finder)
@@ -816,7 +799,7 @@ EOF;
             return \Illuminate\Support\php_binary();
         }
 
-        return (new PhpExecutableFinder())->find(false) ?: 'php';
+        return (new PhpExecutableFinder)->find(false) ?: 'php';
     }
 
     /**
@@ -851,7 +834,7 @@ EOF;
     {
         return [
             'stack' => fn () => select(
-                label: 'Which Jetstream stack would you like to install?',
+                label: 'Which Teams stack would you like to install?',
                 options: [
                     'inertia' => 'Vue with Inertia',
                     'livewire' => 'Livewire',
@@ -863,8 +846,6 @@ EOF;
     /**
      * Interact further with the user if they were prompted for missing arguments.
      *
-     * @param  \Symfony\Component\Console\Input\InputInterface  $input
-     * @param  \Symfony\Component\Console\Output\OutputInterface  $output
      * @return void
      */
     protected function afterPromptingForMissingArguments(InputInterface $input, OutputInterface $output)

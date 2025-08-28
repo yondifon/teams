@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Actions\Jetstream;
+namespace App\Actions\Teams;
 
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
-use Laravel\Jetstream\Contracts\UpdatesTeamNames;
+use Malico\Teams\Contracts\UpdatesTeamNames;
 
 class UpdateTeamName implements UpdatesTeamNames
 {

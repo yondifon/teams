@@ -2,17 +2,17 @@
 
 namespace App\Providers;
 
-use App\Actions\Jetstream\AddTeamMember;
-use App\Actions\Jetstream\CreateTeam;
-use App\Actions\Jetstream\DeleteTeam;
-use App\Actions\Jetstream\DeleteUser;
-use App\Actions\Jetstream\InviteTeamMember;
-use App\Actions\Jetstream\RemoveTeamMember;
-use App\Actions\Jetstream\UpdateTeamName;
+use App\Actions\Teams\AddTeamMember;
+use App\Actions\Teams\CreateTeam;
+use App\Actions\Teams\DeleteTeam;
+use App\Actions\Teams\DeleteUser;
+use App\Actions\Teams\InviteTeamMember;
+use App\Actions\Teams\RemoveTeamMember;
+use App\Actions\Teams\UpdateTeamName;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Jetstream\Jetstream;
+use Malico\Teams\Teams;
 
-class JetstreamServiceProvider extends ServiceProvider
+class TeamsServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -29,13 +29,13 @@ class JetstreamServiceProvider extends ServiceProvider
     {
         $this->configurePermissions();
 
-        Jetstream::createTeamsUsing(CreateTeam::class);
-        Jetstream::updateTeamNamesUsing(UpdateTeamName::class);
-        Jetstream::addTeamMembersUsing(AddTeamMember::class);
-        Jetstream::inviteTeamMembersUsing(InviteTeamMember::class);
-        Jetstream::removeTeamMembersUsing(RemoveTeamMember::class);
-        Jetstream::deleteTeamsUsing(DeleteTeam::class);
-        Jetstream::deleteUsersUsing(DeleteUser::class);
+        Teams::createTeamsUsing(CreateTeam::class);
+        Teams::updateTeamNamesUsing(UpdateTeamName::class);
+        Teams::addTeamMembersUsing(AddTeamMember::class);
+        Teams::inviteTeamMembersUsing(InviteTeamMember::class);
+        Teams::removeTeamMembersUsing(RemoveTeamMember::class);
+        Teams::deleteTeamsUsing(DeleteTeam::class);
+        Teams::deleteUsersUsing(DeleteUser::class);
     }
 
     /**
@@ -43,16 +43,16 @@ class JetstreamServiceProvider extends ServiceProvider
      */
     protected function configurePermissions(): void
     {
-        Jetstream::defaultApiTokenPermissions(['read']);
+        Teams::defaultApiTokenPermissions(['read']);
 
-        Jetstream::role('admin', 'Administrator', [
+        Teams::role('admin', 'Administrator', [
             'create',
             'read',
             'update',
             'delete',
         ])->description('Administrator users can perform any action.');
 
-        Jetstream::role('editor', 'Editor', [
+        Teams::role('editor', 'Editor', [
             'read',
             'create',
             'update',

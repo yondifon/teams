@@ -1,11 +1,11 @@
 <?php
 
-namespace Laravel\Jetstream\Http\Livewire;
+namespace Malico\Teams\Http\Livewire;
 
 use Illuminate\Support\Facades\Auth;
-use Laravel\Jetstream\Contracts\CreatesTeams;
-use Laravel\Jetstream\RedirectsActions;
 use Livewire\Component;
+use Malico\Teams\Contracts\CreatesTeams;
+use Malico\Teams\RedirectsActions;
 
 class CreateTeamForm extends Component
 {
@@ -21,7 +21,6 @@ class CreateTeamForm extends Component
     /**
      * Create a new team.
      *
-     * @param  \Laravel\Jetstream\Contracts\CreatesTeams  $creator
      * @return mixed
      */
     public function createTeam(CreatesTeams $creator)

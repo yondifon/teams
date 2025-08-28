@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Jetstream\Contracts;
+namespace Malico\Teams\Contracts;
 
 /**
  * @method void remove(\Illuminate\Foundation\Auth\User $user, \Illuminate\Database\Eloquent\Model $team, \Illuminate\Foundation\Auth\User $teamMember)

@@ -1,30 +1,28 @@
 <?php
 
-namespace Laravel\Jetstream\Http\Controllers\Inertia;
+namespace Malico\Teams\Http\Controllers\Inertia;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Laravel\Jetstream\Actions\UpdateTeamMemberRole;
-use Laravel\Jetstream\Contracts\AddsTeamMembers;
-use Laravel\Jetstream\Contracts\InvitesTeamMembers;
-use Laravel\Jetstream\Contracts\RemovesTeamMembers;
-use Laravel\Jetstream\Features;
-use Laravel\Jetstream\Jetstream;
+use Malico\Teams\Actions\UpdateTeamMemberRole;
+use Malico\Teams\Contracts\AddsTeamMembers;
+use Malico\Teams\Contracts\InvitesTeamMembers;
+use Malico\Teams\Contracts\RemovesTeamMembers;
+use Malico\Teams\Teams;
 
 class TeamMemberController extends Controller
 {
     /**
      * Add a new team member to a team.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $teamId
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request, $teamId)
     {
-        $team = Jetstream::newTeamModel()->findOrFail($teamId);
+        $team = Teams::newTeamModel()->findOrFail($teamId);
 
-        if (Features::sendsTeamInvitations()) {
+        if (Teams::sendsTeamInvitations()) {
             app(InvitesTeamMembers::class)->invite(
                 $request->user(),
                 $team,
@@ -46,7 +44,6 @@ class TeamMemberController extends Controller
     /**
      * Update the given team member's role.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $teamId
      * @param  int  $userId
      * @return \Illuminate\Http\RedirectResponse
@@ -55,7 +52,7 @@ class TeamMemberController extends Controller
     {
         app(UpdateTeamMemberRole::class)->update(
             $request->user(),
-            Jetstream::newTeamModel()->findOrFail($teamId),
+            Teams::newTeamModel()->findOrFail($teamId),
             $userId,
             $request->role
         );
@@ -66,23 +63,22 @@ class TeamMemberController extends Controller
     /**
      * Remove the given user from the given team.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $teamId
      * @param  int  $userId
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, $teamId, $userId)
     {
-        $team = Jetstream::newTeamModel()->findOrFail($teamId);
+        $team = Teams::newTeamModel()->findOrFail($teamId);
 
         app(RemovesTeamMembers::class)->remove(
             $request->user(),
             $team,
-            $user = Jetstream::findUserByIdOrFail($userId)
+            $user = Teams::findUserByIdOrFail($userId)
         );
 
         if ($request->user()->id === $user->id) {
-            return redirect(config('fortify.home'));
+            return redirect(config('teams.home', '/dashboard'));
         }
 
         return back(303);

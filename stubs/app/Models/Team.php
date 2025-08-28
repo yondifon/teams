@@ -3,12 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Laravel\Jetstream\Events\TeamCreated;
-use Laravel\Jetstream\Events\TeamDeleted;
-use Laravel\Jetstream\Events\TeamUpdated;
-use Laravel\Jetstream\Team as JetstreamTeam;
+use Malico\Teams\Events\TeamCreated;
+use Malico\Teams\Events\TeamDeleted;
+use Malico\Teams\Events\TeamUpdated;
+use Malico\Teams\Team as TeamsTeam;
 
-class Team extends JetstreamTeam
+class Team extends TeamsTeam
 {
     /** @use HasFactory<\Database\Factories\TeamFactory> */
     use HasFactory;

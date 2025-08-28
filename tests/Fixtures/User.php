@@ -1,15 +1,13 @@
 <?php
 
-namespace Laravel\Jetstream\Tests\Fixtures;
+namespace Malico\Teams\Tests\Fixtures;
 
 use App\Models\User as BaseUser;
-use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Jetstream\HasTeams;
-use Laravel\Sanctum\HasApiTokens;
+use Malico\Teams\HasTeams;
 
 class User extends BaseUser
 {
-    use HasApiTokens, HasTeams, HasProfilePhoto;
+    use HasTeams;
 
     /**
      * The attributes that aren't mass assignable.

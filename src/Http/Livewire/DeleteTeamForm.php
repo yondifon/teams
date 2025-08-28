@@ -1,12 +1,12 @@
 <?php
 
-namespace Laravel\Jetstream\Http\Livewire;
+namespace Malico\Teams\Http\Livewire;
 
 use Illuminate\Support\Facades\Auth;
-use Laravel\Jetstream\Actions\ValidateTeamDeletion;
-use Laravel\Jetstream\Contracts\DeletesTeams;
-use Laravel\Jetstream\RedirectsActions;
 use Livewire\Component;
+use Malico\Teams\Actions\ValidateTeamDeletion;
+use Malico\Teams\Contracts\DeletesTeams;
+use Malico\Teams\RedirectsActions;
 
 class DeleteTeamForm extends Component
 {
@@ -40,8 +40,6 @@ class DeleteTeamForm extends Component
     /**
      * Delete the team.
      *
-     * @param  \Laravel\Jetstream\Actions\ValidateTeamDeletion  $validator
-     * @param  \Laravel\Jetstream\Contracts\DeletesTeams  $deleter
      * @return mixed
      */
     public function deleteTeam(ValidateTeamDeletion $validator, DeletesTeams $deleter)

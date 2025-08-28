@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Actions\Jetstream;
+namespace App\Actions\Teams;
 
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
-use Laravel\Jetstream\Contracts\RemovesTeamMembers;
-use Laravel\Jetstream\Events\TeamMemberRemoved;
+use Malico\Teams\Contracts\RemovesTeamMembers;
+use Malico\Teams\Events\TeamMemberRemoved;
 
 class RemoveTeamMember implements RemovesTeamMembers
 {

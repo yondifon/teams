@@ -1,6 +1,6 @@
 <?php
 
-namespace Laravel\Jetstream;
+namespace Malico\Teams;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;

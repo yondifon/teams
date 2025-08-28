@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Jetstream;
+namespace App\Actions\Teams;
 
 use App\Models\Team;
 use App\Models\User;
@@ -10,11 +10,11 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Laravel\Jetstream\Contracts\InvitesTeamMembers;
-use Laravel\Jetstream\Events\InvitingTeamMember;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Mail\TeamInvitation;
-use Laravel\Jetstream\Rules\Role;
+use Malico\Teams\Contracts\InvitesTeamMembers;
+use Malico\Teams\Events\InvitingTeamMember;
+use Malico\Teams\Mail\TeamInvitation;
+use Malico\Teams\Rules\Role;
+use Malico\Teams\Teams;
 
 class InviteTeamMember implements InvitesTeamMembers
 {
@@ -62,11 +62,11 @@ class InviteTeamMember implements InvitesTeamMembers
         return array_filter([
             'email' => [
                 'required', 'email',
-                Rule::unique(Jetstream::teamInvitationModel())->where(function (Builder $query) use ($team) {
+                Rule::unique(Teams::teamInvitationModel())->where(function (Builder $query) use ($team) {
                     $query->where('team_id', $team->id);
                 }),
             ],
-            'role' => Jetstream::hasRoles()
+            'role' => Teams::hasRoles()
                             ? ['required', 'string', new Role]
                             : null,
         ]);

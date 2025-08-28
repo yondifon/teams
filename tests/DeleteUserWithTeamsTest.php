@@ -1,19 +1,19 @@
 <?php
 
-namespace Laravel\Jetstream\Tests;
+namespace Malico\Teams\Tests;
 
-use App\Actions\Jetstream\CreateTeam;
-use App\Actions\Jetstream\DeleteTeam;
-use App\Actions\Jetstream\DeleteUser;
+use App\Actions\Teams\CreateTeam;
+use App\Actions\Teams\DeleteTeam;
+use App\Actions\Teams\DeleteUser;
 use App\Models\Team;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Tests\Fixtures\TeamPolicy;
-use Laravel\Jetstream\Tests\Fixtures\User;
+use Malico\Teams\Teams;
+use Malico\Teams\Tests\Fixtures\TeamPolicy;
+use Malico\Teams\Tests\Fixtures\User;
 
 class DeleteUserWithTeamsTest extends OrchestraTestCase
 {
@@ -24,7 +24,7 @@ class DeleteUserWithTeamsTest extends OrchestraTestCase
         parent::defineEnvironment($app);
 
         Gate::policy(Team::class, TeamPolicy::class);
-        Jetstream::useUserModel(User::class);
+        Teams::useUserModel(User::class);
     }
 
     public function test_user_can_be_deleted()
@@ -37,7 +37,7 @@ class DeleteUserWithTeamsTest extends OrchestraTestCase
         $this->assertSame(2, DB::table('teams')->count());
         $this->assertSame(1, DB::table('team_user')->count());
 
-        copy(__DIR__.'/../stubs/app/Actions/Jetstream/DeleteUserWithTeams.php', $fixture = __DIR__.'/Fixtures/DeleteUser.php');
+        copy(__DIR__.'/../stubs/app/Actions/Teams/DeleteUserWithTeams.php', $fixture = __DIR__.'/Fixtures/DeleteUser.php');
 
         require $fixture;
 

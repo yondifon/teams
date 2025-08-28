@@ -1,26 +1,24 @@
 <?php
 
-namespace Laravel\Jetstream\Http\Controllers;
+namespace Malico\Teams\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
-use Laravel\Jetstream\Contracts\AddsTeamMembers;
-use Laravel\Jetstream\Jetstream;
+use Malico\Teams\Contracts\AddsTeamMembers;
 
 class TeamInvitationController extends Controller
 {
     /**
      * Accept a team invitation.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $invitationId
      * @return \Illuminate\Http\RedirectResponse
      */
     public function accept(Request $request, $invitationId)
     {
-        $model = Jetstream::teamInvitationModel();
+        $model = Teams::teamInvitationModel();
 
         $invitation = $model::whereKey($invitationId)->firstOrFail();
 
@@ -33,7 +31,7 @@ class TeamInvitationController extends Controller
 
         $invitation->delete();
 
-        return redirect(config('fortify.home'))->banner(
+        return redirect(config('teams.home', '/dashboard'))->banner(
             __('Great! You have accepted the invitation to join the :team team.', ['team' => $invitation->team->name]),
         );
     }
@@ -41,13 +39,12 @@ class TeamInvitationController extends Controller
     /**
      * Cancel the given team invitation.
      *
-     * @param  \Illuminate\Http\Request  $request
      * @param  int  $invitationId
      * @return \Illuminate\Http\RedirectResponse
      */
     public function destroy(Request $request, $invitationId)
     {
-        $model = Jetstream::teamInvitationModel();
+        $model = Teams::teamInvitationModel();
 
         $invitation = $model::whereKey($invitationId)->firstOrFail();
 

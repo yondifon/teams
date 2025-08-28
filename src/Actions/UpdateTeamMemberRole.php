@@ -1,12 +1,11 @@
 <?php
 
-namespace Laravel\Jetstream\Actions;
+namespace Malico\Teams\Actions;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
-use Laravel\Jetstream\Events\TeamMemberUpdated;
-use Laravel\Jetstream\Jetstream;
-use Laravel\Jetstream\Rules\Role;
+use Malico\Teams\Events\TeamMemberUpdated;
+use Malico\Teams\Rules\Role;
 
 class UpdateTeamMemberRole
 {
@@ -16,7 +15,6 @@ class UpdateTeamMemberRole
      * @param  mixed  $user
      * @param  mixed  $team
      * @param  int  $teamMemberId
-     * @param  string  $role
      * @return void
      */
     public function update($user, $team, $teamMemberId, string $role)
@@ -33,6 +31,6 @@ class UpdateTeamMemberRole
             'role' => $role,
         ]);
 
-        TeamMemberUpdated::dispatch($team->fresh(), Jetstream::findUserByIdOrFail($teamMemberId));
+        TeamMemberUpdated::dispatch($team->fresh(), Teams::findUserByIdOrFail($teamMemberId));
     }
 }
