@@ -3,9 +3,6 @@ contact_links:
   - name: Feature request
     url: https://github.com/malico/teams/pulls
     about: "For ideas or feature requests, send in a pull request"
-  - name: Support question
-    url: https://laravel.com/docs/contributions#support-questions
-    about: "This repository is only for reporting bugs. If you need help using the library, click:"
   - name: Documentation issue
     url: https://github.com/malico/teams-docs
     about: For documentation issues, open a pull request at the malico/teams-docs repository
