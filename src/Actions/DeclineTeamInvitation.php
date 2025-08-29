@@ -1,18 +1,17 @@
 <?php
 
-namespace App\Actions\Teams;
+namespace Malico\Teams\Actions;
 
-use App\Models\TeamInvitation;
-use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Malico\Teams\Contracts\DeclinesTeamInvitations;
 
-class DeclineTeamInvitation
+class DeclineTeamInvitation implements DeclinesTeamInvitations
 {
     /**
      * Decline the given team invitation.
      */
-    public function decline(User $user, TeamInvitation $invitation): void
+    public function decline($user, $invitation): void
     {
         $team = $invitation->team;
 

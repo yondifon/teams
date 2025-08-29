@@ -1,20 +1,17 @@
 <?php
 
-namespace App\Actions\Teams;
+namespace Malico\Teams\Actions;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Malico\Teams\Contracts\ValidatesTeamDeletion;
 
-class ValidateTeamDeletion
+class ValidateTeamDeletion implements ValidatesTeamDeletion
 {
     /**
      * Validate that the team can be deleted by the given user.
-     *
-     * @param  mixed  $user
-     * @param  mixed  $team
-     * @return void
      */
-    public function validate($user, $team)
+    public function validate($user, $team): void
     {
         Gate::forUser($user)->authorize('delete', $team);
 

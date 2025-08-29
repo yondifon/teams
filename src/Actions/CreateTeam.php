@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Actions\Teams;
+namespace Malico\Teams\Actions;
 
-use App\Models\Team;
-use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Malico\Teams\Contracts\CreatesTeams;
@@ -15,9 +13,10 @@ class CreateTeam implements CreatesTeams
     /**
      * Validate and create a new team for the given user.
      *
+     * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  array<string, string>  $input
      */
-    public function create(User $user, array $input): Team
+    public function create($user, array $input)
     {
         Gate::forUser($user)->authorize('create', Teams::newTeamModel());
 

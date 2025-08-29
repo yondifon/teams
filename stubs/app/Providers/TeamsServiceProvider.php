@@ -2,12 +2,6 @@
 
 namespace App\Providers;
 
-use App\Actions\Teams\AddTeamMember;
-use App\Actions\Teams\CreateTeam;
-use App\Actions\Teams\DeleteTeam;
-use App\Actions\Teams\InviteTeamMember;
-use App\Actions\Teams\RemoveTeamMember;
-use App\Actions\Teams\UpdateTeamName;
 use Illuminate\Support\ServiceProvider;
 use Malico\Teams\Teams;
 
@@ -28,12 +22,7 @@ class TeamsServiceProvider extends ServiceProvider
     {
         $this->configurePermissions();
 
-        Teams::createTeamsUsing(CreateTeam::class);
-        Teams::updateTeamNamesUsing(UpdateTeamName::class);
-        Teams::addTeamMembersUsing(AddTeamMember::class);
-        Teams::inviteTeamMembersUsing(InviteTeamMember::class);
-        Teams::removeTeamMembersUsing(RemoveTeamMember::class);
-        Teams::deleteTeamsUsing(DeleteTeam::class);
+        // Teams::createTeamsUsing(CreateTeam::class);
     }
 
     /**

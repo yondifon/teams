@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Actions\Teams;
+namespace Malico\Teams\Actions;
 
-use App\Models\Team;
-use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Malico\Teams\Contracts\UpdatesTeamNames;
@@ -15,7 +13,7 @@ class UpdateTeamName implements UpdatesTeamNames
      *
      * @param  array<string, string>  $input
      */
-    public function update(User $user, Team $team, array $input): void
+    public function update($user, $team, array $input): void
     {
         Gate::forUser($user)->authorize('update', $team);
 

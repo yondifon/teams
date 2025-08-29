@@ -2,13 +2,13 @@
 
 namespace App\Listeners;
 
-use App\Actions\Teams\CreateTeam;
+use Malico\Teams\Contracts\CreatesTeams;
 use Illuminate\Auth\Events\Registered;
 
 class CreatePersonalTeam
 {
     public function __construct(
-        protected CreateTeam $createTeam
+        protected CreatesTeams $createTeam
     ) {}
 
     public function handle(Registered $event): void

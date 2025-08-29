@@ -3,11 +3,9 @@
 namespace Malico\Teams;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Malico\Teams\Contracts\AddsTeamMembers;
 use Malico\Teams\Contracts\CreatesTeams;
 use Malico\Teams\Contracts\DeletesTeams;
-use Malico\Teams\Contracts\DeletesUsers;
 use Malico\Teams\Contracts\InvitesTeamMembers;
 use Malico\Teams\Contracts\RemovesTeamMembers;
 use Malico\Teams\Contracts\UpdatesTeamNames;
@@ -132,26 +130,6 @@ class Teams
     }
 
     /**
-     * Determine if the application is supporting team features.
-     *
-     * @return bool
-     */
-    public static function hasTeamFeatures()
-    {
-        return true;
-    }
-
-    /**
-     * Determine if invitations are sent to team members.
-     *
-     * @return bool
-     */
-    public static function sendsTeamInvitations()
-    {
-        return in_array('invitations', config('teams.team_options', []));
-    }
-
-    /**
      * Determine if a given user model utilizes the "HasTeams" trait.
      *
      * @param  \Illuminate\Database\Eloquent\Model
@@ -159,9 +137,8 @@ class Teams
      */
     public static function userHasTeamFeatures($user)
     {
-        return (array_key_exists(HasTeams::class, class_uses_recursive($user)) ||
-                method_exists($user, 'currentTeam')) &&
-                static::hasTeamFeatures();
+        return array_key_exists(HasTeams::class, class_uses_recursive($user)) ||
+                method_exists($user, 'currentTeam');
     }
 
     /**
@@ -328,13 +305,53 @@ class Teams
     }
 
     /**
-     * Register a class / callback that should be used to add team members.
+     * Register a class / callback that should be used to invite team members.
      *
      * @return void
      */
     public static function inviteTeamMembersUsing(string $class)
     {
         return app()->singleton(InvitesTeamMembers::class, $class);
+    }
+
+    /**
+     * Register a class / callback that should be used to accept team invitations.
+     *
+     * @return void
+     */
+    public static function acceptTeamInvitationsUsing(string $class)
+    {
+        return app()->singleton(\Malico\Teams\Contracts\AcceptsTeamInvitations::class, $class);
+    }
+
+    /**
+     * Register a class / callback that should be used to decline team invitations.
+     *
+     * @return void
+     */
+    public static function declineTeamInvitationsUsing(string $class)
+    {
+        return app()->singleton(\Malico\Teams\Contracts\DeclinesTeamInvitations::class, $class);
+    }
+
+    /**
+     * Register a class / callback that should be used to update team member roles.
+     *
+     * @return void
+     */
+    public static function updateTeamMemberRolesUsing(string $class)
+    {
+        return app()->singleton(\Malico\Teams\Contracts\UpdatesTeamMemberRoles::class, $class);
+    }
+
+    /**
+     * Register a class / callback that should be used to validate team deletion.
+     *
+     * @return void
+     */
+    public static function validateTeamDeletionUsing(string $class)
+    {
+        return app()->singleton(\Malico\Teams\Contracts\ValidatesTeamDeletion::class, $class);
     }
 
     /**
@@ -358,48 +375,6 @@ class Teams
     }
 
     /**
-     * Register a class / callback that should be used to delete users.
-     *
-     * @return void
-     */
-    public static function deleteUsersUsing(string $class)
-    {
-        return app()->singleton(DeletesUsers::class, $class);
-    }
-
-    /**
-     * Manage Teams's Inertia settings.
-     *
-     * @return \Malico\Teams\InertiaManager
-     */
-    public static function inertia()
-    {
-        if (is_null(static::$inertiaManager)) {
-            static::$inertiaManager = new InertiaManager;
-        }
-
-        return static::$inertiaManager;
-    }
-
-    /**
-     * Find the path to a localized Markdown resource.
-     *
-     * @param  string  $name
-     * @return string|null
-     */
-    public static function localizedMarkdownPath($name)
-    {
-        $localName = preg_replace('#(\.md)$#i', '.'.app()->getLocale().'$1', $name);
-
-        return Arr::first([
-            resource_path('markdown/'.$localName),
-            resource_path('markdown/'.$name),
-        ], function ($path) {
-            return file_exists($path);
-        });
-    }
-
-    /**
      * Get the number of days team invitations are valid for.
      *
      * @return int
@@ -417,18 +392,6 @@ class Teams
     public static function invitationDurationDays(int $days)
     {
         static::$invitationDuration = $days;
-
-        return new static;
-    }
-
-    /**
-     * Configure Teams to not register its routes.
-     *
-     * @return static
-     */
-    public static function ignoreRoutes()
-    {
-        static::$registersRoutes = false;
 
         return new static;
     }

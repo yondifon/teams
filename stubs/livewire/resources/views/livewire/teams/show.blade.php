@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\Teams\UpdateTeamName;
+use Malico\Teams\Contracts\UpdatesTeamNames;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -19,7 +19,7 @@ new class extends Component {
             return;
         }
 
-        app(UpdateTeamName::class)->update(
+        app(UpdatesTeamNames::class)->update(
             auth()->user(),
             $team,
             ['name' => $this->name]

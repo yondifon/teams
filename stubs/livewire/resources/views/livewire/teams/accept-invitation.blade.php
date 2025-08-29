@@ -1,7 +1,7 @@
 <?php
 
-use App\Actions\Teams\AcceptTeamInvitation;
-use App\Actions\Teams\DeclineTeamInvitation;
+use Malico\Teams\Contracts\AcceptsTeamInvitations;
+use Malico\Teams\Contracts\DeclinesTeamInvitations;
 use App\Models\TeamInvitation;
 use Livewire\Attributes\Computed;
 use Livewire\Volt\Component;
@@ -11,7 +11,7 @@ new class extends Component {
 
     public function acceptInvitation()
     {
-        app(AcceptTeamInvitation::class)->accept(
+        app(AcceptsTeamInvitations::class)->accept(
             auth()->user(),
             $this->invitation
         );
@@ -22,7 +22,7 @@ new class extends Component {
 
     public function declineInvitation()
     {
-        app(DeclineTeamInvitation::class)->decline(
+        app(DeclinesTeamInvitations::class)->decline(
             auth()->user(),
             $this->invitation
         );

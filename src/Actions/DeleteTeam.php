@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Actions\Teams;
+namespace Malico\Teams\Actions;
 
-use App\Models\Team;
 use Malico\Teams\Contracts\DeletesTeams;
 
 class DeleteTeam implements DeletesTeams
@@ -10,7 +9,7 @@ class DeleteTeam implements DeletesTeams
     /**
      * Delete the given team.
      */
-    public function delete(Team $team): void
+    public function delete($team): void
     {
         $team->purge();
     }

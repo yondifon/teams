@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\Teams\AcceptTeamInvitation;
+use Malico\Teams\Contracts\AcceptsTeamInvitations;
 use App\Models\TeamInvitation;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
@@ -79,7 +79,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
         // If user registered with invitation, automatically accept it
         if ($this->hasInvitation && $this->pendingInvitation) {
             try {
-                app(AcceptTeamInvitation::class)->accept($user, $this->pendingInvitation);
+                app(AcceptsTeamInvitations::class)->accept($user, $this->pendingInvitation);
 
                 // Clear invitation session data
                 session()->forget(['pending_invitation', 'invitation_email']);

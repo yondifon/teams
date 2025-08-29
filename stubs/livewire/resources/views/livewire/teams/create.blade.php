@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\Teams\CreateTeam;
+use Malico\Teams\Contracts\CreatesTeams;
 use Livewire\Volt\Component;
 
 new class extends Component {
@@ -12,7 +12,7 @@ new class extends Component {
             'name' => 'required|string|max:255',
         ]);
 
-        $team = app(CreateTeam::class)->create(
+        $team = app(CreatesTeams::class)->create(
             auth()->user(),
             ['name' => $this->name]
         );

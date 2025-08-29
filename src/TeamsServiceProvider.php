@@ -11,7 +11,27 @@ class TeamsServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register() {}
+    public function register()
+    {
+        $this->registerActionBindings();
+    }
+
+    /**
+     * Register the action bindings for the package.
+     */
+    protected function registerActionBindings(): void
+    {
+        $this->app->singleton(Contracts\CreatesTeams::class, Actions\CreateTeam::class);
+        $this->app->singleton(Contracts\InvitesTeamMembers::class, Actions\InviteTeamMember::class);
+        $this->app->singleton(Contracts\AcceptsTeamInvitations::class, Actions\AcceptTeamInvitation::class);
+        $this->app->singleton(Contracts\DeclinesTeamInvitations::class, Actions\DeclineTeamInvitation::class);
+        $this->app->singleton(Contracts\AddsTeamMembers::class, Actions\AddTeamMember::class);
+        $this->app->singleton(Contracts\RemovesTeamMembers::class, Actions\RemoveTeamMember::class);
+        $this->app->singleton(Contracts\UpdatesTeamNames::class, Actions\UpdateTeamName::class);
+        $this->app->singleton(Contracts\UpdatesTeamMemberRoles::class, Actions\UpdateTeamMemberRole::class);
+        $this->app->singleton(Contracts\DeletesTeams::class, Actions\DeleteTeam::class);
+        $this->app->singleton(Contracts\ValidatesTeamDeletion::class, Actions\ValidateTeamDeletion::class);
+    }
 
     /**
      * Bootstrap any application services.

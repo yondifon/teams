@@ -105,19 +105,8 @@ class InstallCommand extends Command
         copy(__DIR__.'/../../database/factories/UserFactory.php', base_path('database/factories/UserFactory.php'));
         copy(__DIR__.'/../../database/factories/TeamFactory.php', base_path('database/factories/TeamFactory.php'));
 
-        // Actions...
-        (new Filesystem)->ensureDirectoryExists(app_path('Actions/Teams'));
-        copy($this->stubsPath('app/Actions/Teams/AcceptTeamInvitation.php'), app_path('Actions/Teams/AcceptTeamInvitation.php'));
-        copy($this->stubsPath('app/Actions/Teams/AddTeamMember.php'), app_path('Actions/Teams/AddTeamMember.php'));
-        copy($this->stubsPath('app/Actions/Teams/CreateTeam.php'), app_path('Actions/Teams/CreateTeam.php'));
-        copy($this->stubsPath('app/Actions/Teams/DeclineTeamInvitation.php'), app_path('Actions/Teams/DeclineTeamInvitation.php'));
-        copy($this->stubsPath('app/Actions/Teams/DeleteTeam.php'), app_path('Actions/Teams/DeleteTeam.php'));
-        // copy($this->stubsPath('app/Actions/Teams/DeleteUserWithTeams.php'), app_path('Actions/Teams/DeleteUser.php'));
-        copy($this->stubsPath('app/Actions/Teams/InviteTeamMember.php'), app_path('Actions/Teams/InviteTeamMember.php'));
-        copy($this->stubsPath('app/Actions/Teams/RemoveTeamMember.php'), app_path('Actions/Teams/RemoveTeamMember.php'));
-        copy($this->stubsPath('app/Actions/Teams/UpdateTeamName.php'), app_path('Actions/Teams/UpdateTeamName.php'));
-        copy($this->stubsPath('app/Actions/Teams/UpdateTeamMemberRole.php'), app_path('Actions/Teams/UpdateTeamMemberRole.php'));
-        copy($this->stubsPath('app/Actions/Teams/ValidateTeamDeletion.php'), app_path('Actions/Teams/ValidateTeamDeletion.php'));
+        // Actions are now provided by the package as defaults
+        // Users can override them in their TeamsServiceProvider if needed
 
         // Policies...
         (new Filesystem)->ensureDirectoryExists(app_path('Policies'));

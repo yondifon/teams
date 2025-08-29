@@ -2,15 +2,14 @@
 
 namespace Malico\Teams\Contracts;
 
-interface RemovesTeamMembers
+interface ValidatesTeamDeletion
 {
     /**
-     * Remove the team member from the given team.
+     * Validate that the team can be deleted by the given user.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  mixed  $team
-     * @param  mixed  $teamMember
      * @return void
      */
-    public function remove($user, $team, $teamMember): void;
+    public function validate($user, $team): void;
 }

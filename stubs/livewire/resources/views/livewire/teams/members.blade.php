@@ -1,7 +1,7 @@
 <?php
 
-use App\Actions\Teams\InviteTeamMember;
-use App\Actions\Teams\RemoveTeamMember;
+use Malico\Teams\Contracts\InvitesTeamMembers;
+use Malico\Teams\Contracts\RemovesTeamMembers;
 use App\Models\User;
 use Livewire\Attributes\Computed;
 use Livewire\Volt\Component;
@@ -38,7 +38,7 @@ new class extends Component {
             return;
         }
 
-        app(InviteTeamMember::class)->invite($user, $currentTeam, $this->email, $this->role);
+        app(InvitesTeamMembers::class)->invite($user, $currentTeam, $this->email, $this->role);
 
         $this->reset('email', 'role');
         $this->dispatch('member-invited');
@@ -52,7 +52,7 @@ new class extends Component {
             return;
         }
 
-        app(RemoveTeamMember::class)->remove(auth()->user(), $currentTeam, $member);
+        app(RemovesTeamMembers::class)->remove(auth()->user(), $currentTeam, $member);
 
         $this->dispatch('member-removed');
     }

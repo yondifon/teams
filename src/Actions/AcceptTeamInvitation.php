@@ -1,20 +1,18 @@
 <?php
 
-namespace App\Actions\Teams;
+namespace Malico\Teams\Actions;
 
-use App\Models\Team;
-use App\Models\TeamInvitation;
-use App\Models\User;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
+use Malico\Teams\Contracts\AcceptsTeamInvitations;
 use Malico\Teams\Events\TeamMemberAdded;
 
-class AcceptTeamInvitation
+class AcceptTeamInvitation implements AcceptsTeamInvitations
 {
     /**
      * Accept the given team invitation.
      */
-    public function accept(User $user, TeamInvitation $invitation): void
+    public function accept($user, $invitation): void
     {
         $team = $invitation->team;
 
