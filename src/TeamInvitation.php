@@ -14,6 +14,7 @@ class TeamInvitation extends Model
     protected $fillable = [
         'email',
         'role',
+        'invited_by_id',
     ];
 
     /**
@@ -24,5 +25,15 @@ class TeamInvitation extends Model
     public function team()
     {
         return $this->belongsTo(Teams::teamModel());
+    }
+
+    /**
+     * Get the user who sent the invitation.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function invitedBy()
+    {
+        return $this->belongsTo(Teams::userModel(), 'invited_by_id');
     }
 }

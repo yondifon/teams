@@ -1,34 +1,31 @@
 <?php
 
-use App\Models\Team;
-use Illuminate\Support\Facades\Gate;
-use Livewire\Volt\Component;
+use App\Actions\Teams\UpdateTeamName;
+use function Livewire\Volt\{state, mount};
 
-new class extends Component {
-    public string $name = '';
+state(['name' => '']);
 
-    public function mount(): void
-    {
-        $this->name = auth()->user()->currentTeam?->name ?? '';
+mount(function () {
+    $this->name = auth()->user()->currentTeam?->name ?? '';
+});
+
+$updateTeamInformation = function () {
+    $team = auth()->user()->currentTeam;
+
+    if (!$team) {
+        return;
     }
 
-    public function updateTeamInformation(): void
-    {
-        $team = auth()->user()->currentTeam;
+    app(UpdateTeamName::class)->update(
+        auth()->user(),
+        $team,
+        $this->name
+    );
 
-        if (!$team) {
-            return;
-        }
+    $this->dispatch('team-updated', name: $team->name);
+};
 
-        app(UpdateTeamName::class)->update(
-            auth()->user(),
-            $team,
-            $this->name
-        );
-
-        $this->dispatch('team-updated', name: $team->name);
-    }
-}; ?>
+?>
 
 <section class="w-full">
     @include('partials.teams-heading')

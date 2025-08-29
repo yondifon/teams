@@ -13,7 +13,7 @@ class CurrentTeamController extends Controller
      *
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function update(Request $request)
+    public function __invoke(Request $request)
     {
         $team = Teams::newTeamModel()->findOrFail($request->team_id);
 

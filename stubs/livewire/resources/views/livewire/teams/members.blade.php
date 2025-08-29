@@ -2,64 +2,59 @@
 
 use App\Actions\Teams\InviteTeamMember;
 use App\Actions\Teams\RemoveTeamMember;
-use App\Models\Team;
-use Illuminate\Support\Facades\Gate;
-use Livewire\Volt\Component;
+use App\Models\User;
+use function Livewire\Volt\{state};
 
-new class extends Component {
-    public string $email = '';
-    public string $role = '';
+state(['email' => '', 'role' => '']);
 
-    public function inviteTeamMember(): void
-    {
-        $user = auth()->user();
-        $team = $user->currentTeam;
+$inviteTeamMember = function () {
+    $user = auth()->user();
+    $team = $user->currentTeam;
 
-        if (! $team) {
-            return;
-        }
-
-        app(InviteTeamMember::class)->invite(
-            $user,
-            $team,
-            $this->email,
-            $this->role
-        );
-
-        $this->reset('email', 'role');
-        $this->dispatch('member-invited');
+    if (! $team) {
+        return;
     }
 
-    public function removeTeamMember(User $member): void
-    {
-        $team = auth()->user()->currentTeam;
+    app(InviteTeamMember::class)->invite(
+        $user,
+        $team,
+        $this->email,
+        $this->role
+    );
 
-        if (! $team) {
-            return;
-        }
+    $this->reset('email', 'role');
+    $this->dispatch('member-invited');
+};
 
-        app(RemoveTeamMember::class)->remove(
-            auth()->user(),
-            $team,
-            $member
-        );
+$removeTeamMember = function (User $member) {
+    $team = auth()->user()->currentTeam;
 
-        $this->dispatch('member-removed');
+    if (! $team) {
+        return;
     }
 
-    public function cancelInvitation($invitationId): void
-    {
-        $team = auth()->user()->currentTeam;
-        $invitation = $team->invitations()->find($invitationId);
+    app(RemoveTeamMember::class)->remove(
+        auth()->user(),
+        $team,
+        $member
+    );
 
-        if (! $team || ! $invitation) {
-            return;
-        }
-        $invitation->delete();
+    $this->dispatch('member-removed');
+};
 
-        $this->dispatch('invitation-cancelled');
+$cancelInvitation = function ($invitationId) {
+    $team = auth()->user()->currentTeam;
+    $invitation = $team->invitations()->find($invitationId);
+
+    if (! $team || ! $invitation) {
+        return;
     }
-}; ?>
+    $invitation->delete();
+
+    $this->dispatch('invitation-cancelled');
+};
+
+?>
 
 <section class="w-full">
     @include('partials.teams-heading')

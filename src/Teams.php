@@ -15,13 +15,6 @@ use Malico\Teams\Contracts\UpdatesTeamNames;
 class Teams
 {
     /**
-     * Indicates if Teams routes will be registered.
-     *
-     * @var bool
-     */
-    public static $registersRoutes = true;
-
-    /**
      * The roles that are available to assign to users.
      *
      * @var array
@@ -62,6 +55,13 @@ class Teams
      * @var string
      */
     public static $teamInvitationModel = 'App\\Models\\TeamInvitation';
+
+    /**
+     * The number of days team invitations are valid for.
+     *
+     * @var int
+     */
+    public static $invitationDuration = 7;
 
     /**
      * The Inertia manager instance.
@@ -394,6 +394,28 @@ class Teams
         ], function ($path) {
             return file_exists($path);
         });
+    }
+
+    /**
+     * Get the number of days team invitations are valid for.
+     *
+     * @return int
+     */
+    public static function invitationDuration()
+    {
+        return static::$invitationDuration;
+    }
+
+    /**
+     * Set the number of days team invitations are valid for.
+     *
+     * @return static
+     */
+    public static function invitationDurationDays(int $days)
+    {
+        static::$invitationDuration = $days;
+
+        return new static;
     }
 
     /**

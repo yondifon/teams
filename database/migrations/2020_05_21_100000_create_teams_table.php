@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('teams', function (Blueprint $table) {
+        Schema::create('teams', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('user_id')->index();
             $table->string('name');
@@ -19,27 +19,30 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::create('team_user', function (Blueprint $table) {
+        Schema::create('team_user', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('team_id');
             $table->foreignId('user_id');
             $table->string('role')->nullable();
+            $table->foreignId('invited_by_id')->nullable()->index();
             $table->timestamps();
 
             $table->unique(['team_id', 'user_id']);
         });
 
-        Schema::create('team_invitations', function (Blueprint $table) {
+        Schema::create('team_invitations', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('team_id')->constrained()->cascadeOnDelete();
             $table->string('email');
             $table->string('role')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->foreignId('invited_by_id')->nullable()->index();
             $table->timestamps();
 
             $table->unique(['team_id', 'email']);
         });
 
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             if (Schema::hasColumn('users', 'current_team_id')) {
                 return;
             }
@@ -60,7 +63,7 @@ return new class extends Migration
         Schema::dropIfExists('teams');
         Schema::dropIfExists('team_user');
         Schema::dropIfExists('team_invitations');
-        Schema::table('users', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table): void {
             $table->dropForeign('users_current_team_id_foreign');
             $table->dropColumn('current_team_id');
         });

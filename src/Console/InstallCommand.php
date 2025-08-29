@@ -131,10 +131,18 @@ class InstallCommand extends Command
         $this->hasComposerPackage('livewire/livewire') ?: $this->requireComposerPackages('livewire/livewire:^3.0');
         $this->hasComposerPackage('livewire/volt') ?: $this->requireComposerPackages('livewire/volt:^1.0');
 
-        (new Filesystem)->ensureDirectoryExists(resource_path('views/livewire/teams'));
-        (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/livewire/teams'), resource_path('views/livewire/teams'));
-        (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/components/teams'), resource_path('views/components/teams'));
-        (new Filesystem)->copy($this->stubsPath('livewire/resources/partials/teams-heading.blade.php'), resource_path('views/partials/teams-heading.blade.php'));
+        info('Installing Volt functional components for teams');
+
+        // Volt functional components go in resources/views/pages/
+        (new Filesystem)->ensureDirectoryExists(resource_path('views/pages/teams'));
+        (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/views/livewire/teams'), resource_path('views/pages/teams'));
+        
+        // Supporting components and partials
+        (new Filesystem)->ensureDirectoryExists(resource_path('views/components/teams'));
+        (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/views/components/teams'), resource_path('views/components/teams'));
+        
+        (new Filesystem)->ensureDirectoryExists(resource_path('views/partials'));
+        (new Filesystem)->copy($this->stubsPath('livewire/resources/views/partials/teams-heading.blade.php'), resource_path('views/partials/teams-heading.blade.php'));
     }
 
     protected function installTeamTests(string $stack)
