@@ -43,7 +43,10 @@
         "psr-4": {
             "Malico\\Teams\\Tests\\": "tests/",
             "App\\": "stubs/app/",
-            "Database\\Factories\\": "database/factories/"
+            "Database\\Factories\\": "database/factories/",
+            "Workbench\\App\\": "workbench/app/",
+            "Workbench\\Database\\Factories\\": "workbench/database/factories/",
+            "Workbench\\Database\\Seeders\\": "workbench/database/seeders/"
         }
     },
     "extra": {

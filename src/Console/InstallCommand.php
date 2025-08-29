@@ -58,8 +58,6 @@ class InstallCommand extends Command
         if ($stack === 'inertia') {
             $this->installInertiaComponents();
         }
-
-        $this->installTeamTests($stack);
     }
 
     protected function installInertiaComponents()
@@ -118,6 +116,8 @@ class InstallCommand extends Command
         copy($this->stubsPath('app/Actions/Teams/InviteTeamMember.php'), app_path('Actions/Teams/InviteTeamMember.php'));
         copy($this->stubsPath('app/Actions/Teams/RemoveTeamMember.php'), app_path('Actions/Teams/RemoveTeamMember.php'));
         copy($this->stubsPath('app/Actions/Teams/UpdateTeamName.php'), app_path('Actions/Teams/UpdateTeamName.php'));
+        copy($this->stubsPath('app/Actions/Teams/UpdateTeamMemberRole.php'), app_path('Actions/Teams/UpdateTeamMemberRole.php'));
+        copy($this->stubsPath('app/Actions/Teams/ValidateTeamDeletion.php'), app_path('Actions/Teams/ValidateTeamDeletion.php'));
 
         // Policies...
         (new Filesystem)->ensureDirectoryExists(app_path('Policies'));
@@ -155,21 +155,6 @@ class InstallCommand extends Command
 
         (new Filesystem)->ensureDirectoryExists(resource_path('views/partials'));
         (new Filesystem)->copy($this->stubsPath('livewire/resources/views/partials/teams-heading.blade.php'), resource_path('views/partials/teams-heading.blade.php'));
-    }
-
-    protected function installTeamTests(string $stack)
-    {
-        $stubs = $this->isUsingPest()
-            ? $this->stubsPath('pest-tests/'.$stack)
-            : $this->stubsPath('tests', $stack);
-
-        copy($stubs.'/CreateTeamTest.php', base_path('tests/Feature/CreateTeamTest.php'));
-        copy($stubs.'/DeleteTeamTest.php', base_path('tests/Feature/DeleteTeamTest.php'));
-        copy($stubs.'/InviteTeamMemberTest.php', base_path('tests/Feature/InviteTeamMemberTest.php'));
-        copy($stubs.'/LeaveTeamTest.php', base_path('tests/Feature/LeaveTeamTest.php'));
-        copy($stubs.'/RemoveTeamMemberTest.php', base_path('tests/Feature/RemoveTeamMemberTest.php'));
-        copy($stubs.'/UpdateTeamMemberRoleTest.php', base_path('tests/Feature/UpdateTeamMemberRoleTest.php'));
-        copy($stubs.'/UpdateTeamNameTest.php', base_path('tests/Feature/UpdateTeamNameTest.php'));
     }
 
     /**

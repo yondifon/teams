@@ -1,6 +1,6 @@
 <?php
 
-namespace Malico\Teams\Actions;
+namespace App\Actions\Teams;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
