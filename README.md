@@ -17,7 +17,7 @@ A comprehensive team management package for Laravel applications that provides r
 ## Requirements
 
 - PHP 8.1 or higher
-- Laravel 10.0 or higher
+- Laravel 11.0 or higher
 
 ## Installation
 
@@ -173,7 +173,7 @@ After installation, you'll have Livewire components for:
 - Team switching interface
 - Invitation acceptance/decline pages
 
-### Inertia.js Stack
+### Inertia.js Stack (coming soon)
 
 After installation, you'll have Vue.js components and controllers for:
 
@@ -208,16 +208,6 @@ composer test
 The package includes authorization policies for secure team operations:
 
 - `TeamPolicy`: Controls team-level operations
-- `TeamMemberPolicy`: Controls member management operations
-- `TeamInvitationPolicy`: Controls invitation operations
-
-## Database Schema
-
-The package creates the following database tables:
-
-- `teams`: Stores team information
-- `team_members`: Pivot table for team memberships
-- `team_invitations`: Stores pending team invitations
 
 ## Contributing
 
