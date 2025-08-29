@@ -116,6 +116,8 @@ abstract class Team extends Model
 
         $this->users()->detach();
 
+        $this->invitations()->delete();
+
         $this->delete();
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use Malico\Teams\Contracts\CreatesTeams;
 use Illuminate\Auth\Events\Registered;
+use Malico\Teams\Contracts\CreatesTeams;
 
 class CreatePersonalTeam
 {
@@ -15,7 +15,7 @@ class CreatePersonalTeam
     {
         $this->createTeam->create($event->user, [
             'name' => explode(' ', $event->user->name, 2)[0]."'s Team",
+            'personal_team' => true,
         ]);
     }
 }
-

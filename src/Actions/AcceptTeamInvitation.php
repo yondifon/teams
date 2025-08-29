@@ -29,8 +29,6 @@ class AcceptTeamInvitation implements AcceptsTeamInvitations
             ]);
         }
 
-        Gate::forUser($user)->authorize('view', $team);
-
         if ($team->hasUserWithEmail($user->email)) {
             throw ValidationException::withMessages([
                 'invitation' => [__('You are already a member of this team.')],

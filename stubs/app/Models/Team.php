@@ -35,6 +35,15 @@ class Team extends TeamsTeam
     ];
 
     /**
+     * Get defualt attributes for the model.
+     *
+     * @return array<string, mixed>
+     */
+    public $attributes = [
+        'personal_team' => false,
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

@@ -9,20 +9,9 @@ class AddingTeam
     use Dispatchable;
 
     /**
-     * The team owner.
-     *
-     * @var mixed
-     */
-    public $owner;
-
-    /**
      * Create a new event instance.
      *
-     * @param  mixed  $owner
-     * @return void
+     * @param  mixed $owner
      */
-    public function __construct($owner)
-    {
-        $this->owner = $owner;
-    }
+    public function __construct(public $owner) {}
 }

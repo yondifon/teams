@@ -2,7 +2,6 @@
 
 namespace Malico\Teams\Actions;
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Malico\Teams\Contracts\DeclinesTeamInvitations;
 
@@ -13,14 +12,9 @@ class DeclineTeamInvitation implements DeclinesTeamInvitations
      */
     public function decline($user, $invitation): void
     {
-        $team = $invitation->team;
-
-        Gate::forUser($user)->authorize('view', $team);
-
-        if ($invitation->expires_at && $invitation->expires_at->isPast()) {
-            $invitation->delete();
+        if ($user->email !== $invitation->email) {
             throw ValidationException::withMessages([
-                'invitation' => [__('This invitation has expired.')],
+                'invitation' => [__('This invitation was sent to :email. Please sign in with that account or create one if you don\'t have it.', ['email' => $invitation->email])],
             ]);
         }
 

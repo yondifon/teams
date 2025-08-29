@@ -22,13 +22,23 @@ class CreateTeam implements CreatesTeams
 
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
+            'personal_team' => ['boolean', function ($attribute, $value, $fail) use ($user) {
+                $hasPersonal = Teams::teamModel()::query()
+                    ->where('personal_team', true)
+                    ->where('user_id', $user->id)
+                    ->exists();
+
+                if ($value && $hasPersonal) {
+                    $fail('You may not create a personal team.')->translate();
+                }
+            }],
         ])->validateWithBag('createTeam');
 
         AddingTeam::dispatch($user);
 
         $user->switchTeam($team = $user->ownedTeams()->create([
             'name' => $input['name'],
-            'personal_team' => false,
+            'personal_team' => $input['personal_team'] ?? false,
         ]));
 
         return $team;

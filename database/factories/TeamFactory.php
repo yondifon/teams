@@ -20,7 +20,20 @@ class TeamFactory extends Factory
         return [
             'name' => $this->faker->unique()->company(),
             'user_id' => User::factory(),
-            'personal_team' => true,
         ];
+    }
+
+    public function personalTeam(): self
+    {
+        return $this->state(fn (array $attributes) => [
+            'personal_team' => true,
+        ]);
+    }
+
+    public function regularTeam(): self
+    {
+        return $this->state(fn (array $attributes) => [
+            'personal_team' => false,
+        ]);
     }
 }
