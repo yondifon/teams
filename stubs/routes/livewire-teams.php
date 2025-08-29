@@ -1,27 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 use Malico\Teams\Http\Controllers\CurrentTeamController;
-use Malico\Teams\Http\Controllers\Livewire\TeamController;
-use Malico\Teams\Http\Controllers\Livewire\TeamMemberController;
-use Malico\Teams\Http\Controllers\TeamInvitationController;
 
-Route::group(['middleware' => ['auth', 'verified']], function () {
-    // Teams...
-    Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
-    Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');
-    Route::get('/teams/{team}', [TeamController::class, 'show'])->name('teams.show');
-    Route::put('/teams/{team}', [TeamController::class, 'update'])->name('teams.update');
-    Route::delete('/teams/{team}', [TeamController::class, 'destroy'])->name('teams.destroy');
-    Route::put('/current-team', [CurrentTeamController::class, 'update'])->name('current-team.update');
-    Route::post('/teams/{team}/members', [TeamMemberController::class, 'store'])->name('team-members.store');
-    Route::put('/teams/{team}/members/{user}', [TeamMemberController::class, 'update'])->name('team-members.update');
-    Route::delete('/teams/{team}/members/{user}', [TeamMemberController::class, 'destroy'])->name('team-members.destroy');
+Route::group(['middleware' => ['auth']], function () {
+    Volt::route('/teams', 'teams.create')->name('teams.index');
+    Volt::route('/teams/create', 'teams.create')->name('teams.create');
+    Volt::route('/team/settings', 'teams.show')->name('teams.show');
+    Volt::route('/team/members', 'teams.members')->name('teams.members');
 
-    Route::get('/team-invitations/{invitation}', [TeamInvitationController::class, 'accept'])
-        ->middleware(['signed'])
-        ->name('team-invitations.accept');
-
-    Route::delete('/team-invitations/{invitation}', [TeamInvitationController::class, 'destroy'])
-        ->name('team-invitations.destroy');
+    Route::put('/current-team', CurrentTeamController::class)->name('current-team.update');
 });
+
+Volt::route('/team-invitations/{invitation}', 'teams.accept-invitation')
+    ->middleware(['auth', 'signed'])
+    ->name('team-invitations.accept');

@@ -38,8 +38,6 @@ class InstallCommand extends Command
 
         $this->publishEmailTemplates();
 
-        $this->installTeamTests();
-
         return self::SUCCESS;
     }
 
@@ -49,7 +47,7 @@ class InstallCommand extends Command
 
         //  TODO: use vendor:publish for routes.
         $routeStub = $stack === 'livewire' ? 'livewire-teams.php' : 'inertia-teams.php';
-        copy(__DIR__.'/../../stubs/routes/'.$routeStub, base_path('routes/teams.php'));
+        copy($this->stubsPath('routes/'.$routeStub), base_path('routes/teams.php'));
         $this->includeTeamsRoutesInWebPhp();
 
         if ($stack === 'livewire') {
@@ -59,6 +57,8 @@ class InstallCommand extends Command
         if ($stack === 'inertia') {
             $this->installInertiaComponents();
         }
+
+        $this->installTeamTests($stack);
     }
 
     protected function installInertiaComponents()
@@ -69,8 +69,8 @@ class InstallCommand extends Command
 
         (new Filesystem)->ensureDirectoryExists(resource_path('js/pages/teams'));
 
-        $reactStubsPath = __DIR__.'/../../stubs/inertia/react/resources/js/pages/teams';
-        $vueStubsPath = __DIR__.'/../../stubs/inertia/vue/resources/js/pages/teams';
+        $reactStubsPath = $this->stubsPath('inertia/react/resources/js/pages/teams');
+        $vueStubsPath = $this->stubsPath('inertia/vue/resources/js/pages/teams');
 
         return $framework === 'react' && is_dir($reactStubsPath)
             ? (new Filesystem)->copyDirectory($reactStubsPath, resource_path('js/pages/teams'))
@@ -80,7 +80,7 @@ class InstallCommand extends Command
     protected function publishEmailTemplates()
     {
         (new Filesystem)->ensureDirectoryExists(resource_path('views/emails'));
-        (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/resources/views/emails', resource_path('views/emails'));
+        (new Filesystem)->copyDirectory($this->stubsPath('resources/views/emails'), resource_path('views/emails'));
     }
 
     /**
@@ -91,16 +91,16 @@ class InstallCommand extends Command
     protected function installBackendComponents()
     {
         // Service Providers...
-        copy(__DIR__.'/../../stubs/app/Providers/TeamsServiceProvider.php', app_path('Providers/TeamsServiceProvider.php'));
+        copy($this->stubsPath('app/Providers/TeamsServiceProvider.php'), app_path('Providers/TeamsServiceProvider.php'));
         ServiceProvider::addProviderToBootstrapFile('App\Providers\TeamsServiceProvider');
 
         $this->callSilent('vendor:publish', ['--tag' => 'teams-migrations', '--force' => true]);
 
         // Models...
-        copy(__DIR__.'/../../stubs/app/Models/Membership.php', app_path('Models/Membership.php'));
-        copy(__DIR__.'/../../stubs/app/Models/Team.php', app_path('Models/Team.php'));
-        copy(__DIR__.'/../../stubs/app/Models/TeamInvitation.php', app_path('Models/TeamInvitation.php'));
-        copy(__DIR__.'/../../stubs/app/Models/User.php', app_path('Models/User.php'));
+        copy($this->stubsPath('app/Models/Membership.php'), app_path('Models/Membership.php'));
+        copy($this->stubsPath('app/Models/Team.php'), app_path('Models/Team.php'));
+        copy($this->stubsPath('app/Models/TeamInvitation.php'), app_path('Models/TeamInvitation.php'));
+        copy($this->stubsPath('app/Models/User.php'), app_path('Models/User.php'));
 
         // Factories...
         copy(__DIR__.'/../../database/factories/UserFactory.php', base_path('database/factories/UserFactory.php'));
@@ -108,17 +108,17 @@ class InstallCommand extends Command
 
         // Actions...
         (new Filesystem)->ensureDirectoryExists(app_path('Actions/Teams'));
-        copy(__DIR__.'/../../stubs/app/Actions/Teams/AddTeamMember.php', app_path('Actions/Teams/AddTeamMember.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Teams/CreateTeam.php', app_path('Actions/Teams/CreateTeam.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Teams/DeleteTeam.php', app_path('Actions/Teams/DeleteTeam.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Teams/DeleteUserWithTeams.php', app_path('Actions/Teams/DeleteUser.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Teams/InviteTeamMember.php', app_path('Actions/Teams/InviteTeamMember.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Teams/RemoveTeamMember.php', app_path('Actions/Teams/RemoveTeamMember.php'));
-        copy(__DIR__.'/../../stubs/app/Actions/Teams/UpdateTeamName.php', app_path('Actions/Teams/UpdateTeamName.php'));
+        copy($this->stubsPath('app/Actions/Teams/AddTeamMember.php'), app_path('Actions/Teams/AddTeamMember.php'));
+        copy($this->stubsPath('app/Actions/Teams/CreateTeam.php'), app_path('Actions/Teams/CreateTeam.php'));
+        copy($this->stubsPath('app/Actions/Teams/DeleteTeam.php'), app_path('Actions/Teams/DeleteTeam.php'));
+        // copy($this->stubsPath('app/Actions/Teams/DeleteUserWithTeams.php'), app_path('Actions/Teams/DeleteUser.php'));
+        copy($this->stubsPath('app/Actions/Teams/InviteTeamMember.php'), app_path('Actions/Teams/InviteTeamMember.php'));
+        copy($this->stubsPath('app/Actions/Teams/RemoveTeamMember.php'), app_path('Actions/Teams/RemoveTeamMember.php'));
+        copy($this->stubsPath('app/Actions/Teams/UpdateTeamName.php'), app_path('Actions/Teams/UpdateTeamName.php'));
 
         // Policies...
         (new Filesystem)->ensureDirectoryExists(app_path('Policies'));
-        (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/app/Policies/TeamPolicy.php', app_path('Policies'));
+        (new Filesystem)->copyDirectory($this->stubsPath('app/Policies/TeamPolicy.php'), app_path('Policies'));
     }
 
     /**
@@ -129,15 +129,19 @@ class InstallCommand extends Command
     protected function installLivewireComponents()
     {
         $this->hasComposerPackage('livewire/livewire') ?: $this->requireComposerPackages('livewire/livewire:^3.0');
-        $this->hasComposerPackage('laravel/volt') ?: $this->requireComposerPackages('laravel/volt:^1.0');
+        $this->hasComposerPackage('livewire/volt') ?: $this->requireComposerPackages('livewire/volt:^1.0');
 
         (new Filesystem)->ensureDirectoryExists(resource_path('views/livewire/teams'));
-        (new Filesystem)->copyDirectory(__DIR__.'/../../stubs/volt/resources/views/pages/teams', resource_path('views/livewire/teams'));
+        (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/livewire/teams'), resource_path('views/livewire/teams'));
+        (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/components/teams'), resource_path('views/components/teams'));
+        (new Filesystem)->copy($this->stubsPath('livewire/resources/partials/teams-heading.blade.php'), resource_path('views/partials/teams-heading.blade.php'));
     }
 
-    protected function installTeamTests()
+    protected function installTeamTests(string $stack)
     {
-        $stubs = $this->getTestStubsPath();
+        $stubs = $this->isUsingPest()
+            ? $this->stubsPath('pest-tests/'.$stack)
+            : $this->stubsPath('tests', $stack);
 
         copy($stubs.'/CreateTeamTest.php', base_path('tests/Feature/CreateTeamTest.php'));
         copy($stubs.'/DeleteTeamTest.php', base_path('tests/Feature/DeleteTeamTest.php'));
@@ -206,16 +210,19 @@ class InstallCommand extends Command
     }
 
     /**
+     * Get the path to the stubs directory.
+     */
+    protected function stubsPath(string $path = ''): string
+    {
+        return __DIR__.'/../../stubs'.($path ? '/'.$path : '');
+    }
+
+    /**
      * Returns the path to the correct test stubs.
      *
      * @return string
      */
-    protected function getTestStubsPath()
-    {
-        return $this->option('pest') || $this->isUsingPest()
-            ? __DIR__.'/../../stubs/pest-tests'
-            : __DIR__.'/../../stubs/tests';
-    }
+    protected function getTestStubsPath() {}
 
     /**
      * Determine if the given Composer package is installed.

@@ -4,6 +4,7 @@ namespace Malico\Teams\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Malico\Teams\Teams;
 
 class CurrentTeamController extends Controller
 {
@@ -20,6 +21,6 @@ class CurrentTeamController extends Controller
             abort(403);
         }
 
-        return redirect(config('teams.home', '/dashboard'), 303);
+        return back(303);
     }
 }
