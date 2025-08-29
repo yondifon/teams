@@ -5,7 +5,6 @@ namespace App\Providers;
 use App\Actions\Teams\AddTeamMember;
 use App\Actions\Teams\CreateTeam;
 use App\Actions\Teams\DeleteTeam;
-use App\Actions\Teams\DeleteUser;
 use App\Actions\Teams\InviteTeamMember;
 use App\Actions\Teams\RemoveTeamMember;
 use App\Actions\Teams\UpdateTeamName;
@@ -35,7 +34,6 @@ class TeamsServiceProvider extends ServiceProvider
         Teams::inviteTeamMembersUsing(InviteTeamMember::class);
         Teams::removeTeamMembersUsing(RemoveTeamMember::class);
         Teams::deleteTeamsUsing(DeleteTeam::class);
-        Teams::deleteUsersUsing(DeleteUser::class);
     }
 
     /**
@@ -43,8 +41,6 @@ class TeamsServiceProvider extends ServiceProvider
      */
     protected function configurePermissions(): void
     {
-        Teams::defaultApiTokenPermissions(['read']);
-
         Teams::role('admin', 'Administrator', [
             'create',
             'read',
