@@ -28,7 +28,7 @@ class TeamController extends Controller
         Gate::authorize('view', $team);
 
         return Teams::inertia()->render($request, 'Teams/Show', [
-            'team' => $team->load('owner', 'users', 'teamInvitations'),
+            'team' => $team->load('owner', 'users', 'invitations'),
             'availableRoles' => array_values(Teams::$roles),
             'availablePermissions' => Teams::$permissions,
             'defaultPermissions' => Teams::$defaultPermissions,

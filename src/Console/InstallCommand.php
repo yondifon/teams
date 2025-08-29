@@ -21,6 +21,7 @@ class InstallCommand extends Command
      */
     protected $signature = 'teams:install {--stack : The development stack that should be installed (inertia,livewire)}
                                               {--pest : Indicates if Pest should be installed}
+                                              {--override : Override existing auth files like register.blade.php with team invitation support}
                                               {--composer=global : Absolute path to the Composer binary which should be used to install packages}';
 
     /**
@@ -108,8 +109,10 @@ class InstallCommand extends Command
 
         // Actions...
         (new Filesystem)->ensureDirectoryExists(app_path('Actions/Teams'));
+        copy($this->stubsPath('app/Actions/Teams/AcceptTeamInvitation.php'), app_path('Actions/Teams/AcceptTeamInvitation.php'));
         copy($this->stubsPath('app/Actions/Teams/AddTeamMember.php'), app_path('Actions/Teams/AddTeamMember.php'));
         copy($this->stubsPath('app/Actions/Teams/CreateTeam.php'), app_path('Actions/Teams/CreateTeam.php'));
+        copy($this->stubsPath('app/Actions/Teams/DeclineTeamInvitation.php'), app_path('Actions/Teams/DeclineTeamInvitation.php'));
         copy($this->stubsPath('app/Actions/Teams/DeleteTeam.php'), app_path('Actions/Teams/DeleteTeam.php'));
         // copy($this->stubsPath('app/Actions/Teams/DeleteUserWithTeams.php'), app_path('Actions/Teams/DeleteUser.php'));
         copy($this->stubsPath('app/Actions/Teams/InviteTeamMember.php'), app_path('Actions/Teams/InviteTeamMember.php'));
@@ -118,7 +121,11 @@ class InstallCommand extends Command
 
         // Policies...
         (new Filesystem)->ensureDirectoryExists(app_path('Policies'));
-        (new Filesystem)->copyDirectory($this->stubsPath('app/Policies/TeamPolicy.php'), app_path('Policies'));
+        (new Filesystem)->copy($this->stubsPath('app/Policies/TeamPolicy.php'), app_path('Policies/TeamPolicy.php'));
+
+        // Listeners...
+        (new Filesystem)->ensureDirectoryExists(app_path('Listeners'));
+        (new Filesystem)->copy($this->stubsPath('app/Listeners/CreatePersonalTeam.php'), app_path('Listeners/CreatePersonalTeam.php'));
     }
 
     /**
@@ -136,11 +143,16 @@ class InstallCommand extends Command
         // Volt functional components go in resources/views/pages/
         (new Filesystem)->ensureDirectoryExists(resource_path('views/pages/teams'));
         (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/views/livewire/teams'), resource_path('views/pages/teams'));
-        
+
+        // Override auth files if requested
+        if ($this->option('override')) {
+            $this->publishAuthOverrides();
+        }
+
         // Supporting components and partials
         (new Filesystem)->ensureDirectoryExists(resource_path('views/components/teams'));
         (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/views/components/teams'), resource_path('views/components/teams'));
-        
+
         (new Filesystem)->ensureDirectoryExists(resource_path('views/partials'));
         (new Filesystem)->copy($this->stubsPath('livewire/resources/views/partials/teams-heading.blade.php'), resource_path('views/partials/teams-heading.blade.php'));
     }
@@ -158,6 +170,31 @@ class InstallCommand extends Command
         copy($stubs.'/RemoveTeamMemberTest.php', base_path('tests/Feature/RemoveTeamMemberTest.php'));
         copy($stubs.'/UpdateTeamMemberRoleTest.php', base_path('tests/Feature/UpdateTeamMemberRoleTest.php'));
         copy($stubs.'/UpdateTeamNameTest.php', base_path('tests/Feature/UpdateTeamNameTest.php'));
+    }
+
+    /**
+     * Publish auth file overrides with team invitation support.
+     */
+    protected function publishAuthOverrides()
+    {
+        info('Publishing auth file overrides with team invitation support...');
+
+        // Ensure auth directory exists
+        (new Filesystem)->ensureDirectoryExists(resource_path('views/livewire/auth'));
+
+        // Copy register override
+        copy(
+            $this->stubsPath('livewire/resources/views/livewire/auth/register.blade.php'),
+            resource_path('views/livewire/auth/register.blade.php')
+        );
+
+        // Copy login override
+        copy(
+            $this->stubsPath('livewire/resources/views/livewire/auth/login.blade.php'),
+            resource_path('views/livewire/auth/login.blade.php')
+        );
+
+        $this->components->info('Auth overrides published with team invitation support.');
     }
 
     /**

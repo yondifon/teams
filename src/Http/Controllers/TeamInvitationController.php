@@ -5,11 +5,62 @@ namespace Malico\Teams\Http\Controllers;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Malico\Teams\Contracts\AddsTeamMembers;
+use Malico\Teams\Teams;
 
 class TeamInvitationController extends Controller
 {
+    /**
+     * Handle team invitation URL and redirect appropriately.
+     *
+     * @param  int  $invitationId
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function show(Request $request, $invitationId)
+    {
+        $model = Teams::teamInvitationModel();
+        $invitation = $model::whereKey($invitationId)->firstOrFail();
+
+        if ($invitation->expires_at && $invitation->expires_at->isPast()) {
+            $invitation->delete();
+
+            return redirect('/')->with('error', __('This invitation has expired.'));
+        }
+
+        if (! auth()->check()) {
+            return $this->handleUnauthenticatedUser($invitation);
+        }
+
+        if (auth()->user()->email !== $invitation->email) {
+            Auth::logout();
+
+            return redirect()->signedRoute('team-invitations.show', $invitation);
+        }
+
+        return redirect()->signedRoute('team-invitations.accept', $invitation);
+    }
+
+    protected function handleUnauthenticatedUser($invitation)
+    {
+        session([
+            'pending_invitation' => $invitation->id,
+            'invitation_email' => $invitation->email,
+        ]);
+
+        $userModel = Teams::userModel();
+        $userExists = $userModel::where('email', $invitation->email)->exists();
+
+        if ($userExists) {
+            return redirect()->route('login', ['email' => $invitation->email])
+                ->with('message', __('Please sign in to accept your team invitation.'));
+        }
+
+        return redirect()->route('register', ['email' => $invitation->email])
+            ->with('message', __('Create an account to join the team.'));
+    }
+
     /**
      * Accept a team invitation.
      *

@@ -1,28 +1,32 @@
 <?php
 
 use App\Actions\Teams\UpdateTeamName;
-use function Livewire\Volt\{state, mount};
+use Livewire\Volt\Component;
 
-state(['name' => '']);
+new class extends Component {
+    public $name = '';
 
-mount(function () {
-    $this->name = auth()->user()->currentTeam?->name ?? '';
-});
-
-$updateTeamInformation = function () {
-    $team = auth()->user()->currentTeam;
-
-    if (!$team) {
-        return;
+    public function mount()
+    {
+        $this->name = auth()->user()->currentTeam?->name ?? '';
     }
 
-    app(UpdateTeamName::class)->update(
-        auth()->user(),
-        $team,
-        $this->name
-    );
+    public function updateTeamInformation()
+    {
+        $team = auth()->user()->currentTeam;
 
-    $this->dispatch('team-updated', name: $team->name);
+        if (!$team) {
+            return;
+        }
+
+        app(UpdateTeamName::class)->update(
+            auth()->user(),
+            $team,
+            ['name' => $this->name]
+        );
+
+        $this->dispatch('team-updated', name: $team->name);
+    }
 };
 
 ?>

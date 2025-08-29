@@ -3,37 +3,49 @@
 use App\Actions\Teams\AcceptTeamInvitation;
 use App\Actions\Teams\DeclineTeamInvitation;
 use App\Models\TeamInvitation;
-use function Livewire\Volt\{state, mount};
+use Livewire\Attributes\Computed;
+use Livewire\Volt\Component;
 
-state(['invitation']);
+new class extends Component {
+    public TeamInvitation $invitation;
 
+    public function acceptInvitation()
+    {
+        app(AcceptTeamInvitation::class)->accept(
+            auth()->user(),
+            $this->invitation
+        );
 
-$acceptInvitation = function () {
-    if (!$this->invitation || !$this->invitation->team) {
-        return $this->redirect('/');
+        session()->flash('message', __('Welcome to the team!'));
+        $this->redirect(route('teams.show', $this->invitation->team), navigate: true);
     }
 
-    app(AcceptTeamInvitation::class)->accept(
-        auth()->user(),
-        $this->invitation
-    );
+    public function declineInvitation()
+    {
+        app(DeclineTeamInvitation::class)->decline(
+            auth()->user(),
+            $this->invitation
+        );
 
-    session()->flash('message', __('Welcome to the team!'));
-    $this->redirect(route('teams.show', $this->invitation->team), navigate: true);
-};
-
-$declineInvitation = function () {
-    if (!$this->invitation) {
-        return $this->redirect('/');
+        session()->flash('message', __('Invitation declined.'));
+        $this->redirect('/', navigate: true);
     }
 
-    app(DeclineTeamInvitation::class)->decline(
-        auth()->user(),
-        $this->invitation
-    );
+    public function switchToCorrectAccount()
+    {
+        auth()->logout();
+        session([
+            'pending_invitation' => $this->invitation->id,
+            'invitation_email' => $this->invitation->email,
+        ]);
+        return $this->redirect(route('login'));
+    }
 
-    session()->flash('message', __('Invitation declined.'));
-    $this->redirect('/', navigate: true);
+    #[Computed]
+    public function wrongUserLoggedIn()
+    {
+        return auth()->user()->email !== $this->invitation->email;
+    }
 };
 
 ?>
@@ -63,22 +75,38 @@ $declineInvitation = function () {
 
                 <div class="space-y-4">
                     <flux:error name="invitation" />
-                    
-                    <flux:button
-                        wire:click="acceptInvitation"
-                        variant="primary"
-                        class="w-full"
-                    >
-                        {{ __('Accept Invitation') }}
-                    </flux:button>
 
-                    <flux:button
-                        wire:click="declineInvitation"
-                        variant="ghost"
-                        class="w-full"
-                    >
-                        {{ __('Decline') }}
-                    </flux:button>
+                    @if($this->wrongUserLoggedIn)
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-md p-4 mb-4">
+                            <div class="text-sm text-yellow-800">
+                                {{ __('This invitation was sent to :email, but you\'re signed in as :current. Please switch accounts to accept this invitation.', ['email' => $invitation->email, 'current' => auth()->user()->email]) }}
+                            </div>
+                        </div>
+                        
+                        <flux:button
+                            wire:click="switchToCorrectAccount"
+                            variant="primary"
+                            class="w-full"
+                        >
+                            {{ __('Switch to :email', ['email' => $invitation->email]) }}
+                        </flux:button>
+                    @else
+                        <flux:button
+                            wire:click="acceptInvitation"
+                            variant="primary"
+                            class="w-full"
+                        >
+                            {{ __('Accept Invitation') }}
+                        </flux:button>
+
+                        <flux:button
+                            wire:click="declineInvitation"
+                            variant="ghost"
+                            class="w-full"
+                        >
+                            {{ __('Decline') }}
+                        </flux:button>
+                    @endif
                 </div>
             @else
                 <div class="text-center">

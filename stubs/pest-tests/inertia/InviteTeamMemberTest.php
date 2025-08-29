@@ -17,7 +17,7 @@ test('team members can be invited to team', function () {
 
     Mail::assertSent(TeamInvitation::class);
 
-    expect($user->currentTeam->fresh()->teamInvitations)->toHaveCount(1);
+    expect($user->currentTeam->fresh()->invitations)->toHaveCount(1);
 })->skip(function () {
     return ! Features::sendsTeamInvitations();
 }, 'Team invitations not enabled.');

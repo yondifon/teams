@@ -3,6 +3,7 @@
 namespace Malico\Teams\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
+use Malico\Teams\Teams;
 
 class Role implements Rule
 {

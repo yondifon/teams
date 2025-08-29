@@ -64,13 +64,6 @@ class Teams
     public static $invitationDuration = 7;
 
     /**
-     * The Inertia manager instance.
-     *
-     * @var \Malico\Teams\InertiaManager
-     */
-    public static $inertiaManager;
-
-    /**
      * Determine if Teams has registered roles.
      *
      * @return bool
@@ -78,6 +71,16 @@ class Teams
     public static function hasRoles()
     {
         return count(static::$roles) > 0;
+    }
+
+    /**
+     * Get all available roles.
+     *
+     * @return array
+     */
+    public static function getRoles()
+    {
+        return static::$roles;
     }
 
     /**

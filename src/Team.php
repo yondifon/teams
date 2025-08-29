@@ -79,7 +79,7 @@ abstract class Team extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function teamInvitations()
+    public function invitations()
     {
         return $this->hasMany(Teams::teamInvitationModel());
     }
