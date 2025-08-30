@@ -5,7 +5,7 @@ use Livewire\Volt\Volt;
 use Malico\Teams\Http\Controllers\CurrentTeamController;
 use Malico\Teams\Http\Controllers\TeamInvitationController;
 
-Route::group(['middleware' => ['auth']], function () {
+Route::group(['middleware' => ['auth']], function (): void {
     Volt::route('/teams', 'teams.index')->name('teams.index');
     Volt::route('/teams/create', 'teams.create')->name('teams.create');
 

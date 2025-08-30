@@ -31,16 +31,16 @@ class TeamsServiceProvider extends ServiceProvider
     protected function configurePermissions(): void
     {
         Teams::role('admin', 'Administrator', [
-            'create',
-            'read',
-            'update',
-            'delete',
+            'team:create',
+            'team:read',
+            'team:update',
+            'team:members:*',
+            // 'api-keys:*',
         ])->description('Administrator users can perform any action.');
 
-        Teams::role('editor', 'Editor', [
-            'read',
-            'create',
-            'update',
-        ])->description('Editor users have the ability to read, create, and update.');
+        Teams::role('member', 'Member', [
+            'team:read',
+            'team:members:read',
+        ])->description('Member users can read teams and their members.');
     }
 }

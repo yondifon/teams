@@ -5,18 +5,21 @@ namespace Malico\Teams\Actions;
 use Closure;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Malico\Teams\Contracts\InvitesTeamMembers;
+use Malico\Teams\Contracts\SendsTeamInvitations;
 use Malico\Teams\Events\InvitingTeamMember;
-use Malico\Teams\Mail\TeamInvitation;
 use Malico\Teams\Role as TeamsRole;
 use Malico\Teams\Rules\Role;
 use Malico\Teams\Teams;
 
 class InviteTeamMember implements InvitesTeamMembers
 {
+    public function __construct(
+        protected SendsTeamInvitations $sendsTeamInvitations
+    ) {}
+
     /**
      * Invite a new team member to the given team.
      */
@@ -33,7 +36,7 @@ class InviteTeamMember implements InvitesTeamMembers
             'role' => $role,
         ]);
 
-        Mail::to($email)->send(new TeamInvitation($invitation));
+        $this->sendsTeamInvitations->send($invitation);
 
         return $invitation;
     }
@@ -70,8 +73,8 @@ class InviteTeamMember implements InvitesTeamMembers
                 }),
             ],
             'role' => Teams::hasRoles()
-                            ? ['required', 'string', new Role]
-                            : null,
+                ? ['required', 'string', new Role]
+                : null,
         ]);
     }
 

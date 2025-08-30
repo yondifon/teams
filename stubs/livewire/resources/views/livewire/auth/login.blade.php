@@ -123,7 +123,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             autofocus
             autocomplete="email"
             placeholder="email@example.com"
-            :readonly="$pendingInvitation"
+            :readonly="(bool) $pendingInvitation"
             :variant="$pendingInvitation ? 'filled' : null"
             :description="$pendingInvitation ? __('Email address from your team invitation') : null"
         />

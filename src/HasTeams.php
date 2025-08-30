@@ -38,6 +38,10 @@ trait HasTeams
      */
     public function switchTeam($team): bool
     {
+        if (! $team) {
+            return false;
+        }
+
         if (! $this->belongsToTeam($team)) {
             return false;
         }
@@ -75,7 +79,7 @@ trait HasTeams
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Teams::teamModel(), Teams::membershipModel())
-            ->withPivot('role')
+            ->withPivot(['role', 'invited_by_id'])
             ->withTimestamps()
             ->as('membership');
     }
@@ -197,5 +201,41 @@ trait HasTeams
         }
 
         return Permission::hasPermission($this->teamPermissions($team), $permission);
+    }
+
+    /**
+     * Get the user's role on their current team.
+     */
+    public function currentTeamRole(): ?Role
+    {
+        if (! $this->currentTeam) {
+            return null;
+        }
+
+        return $this->teamRole($this->currentTeam);
+    }
+
+    /**
+     * Get the user's permissions on their current team.
+     */
+    public function currentTeamPermissions(): array
+    {
+        if (! $this->currentTeam) {
+            return [];
+        }
+
+        return $this->teamPermissions($this->currentTeam);
+    }
+
+    /**
+     * Determine if the user has the given permission on their current team.
+     */
+    public function hasCurrentTeamPermission(string $permission): bool
+    {
+        if (! $this->currentTeam) {
+            return false;
+        }
+
+        return $this->hasTeamPermission($this->currentTeam, $permission);
     }
 }

@@ -2,7 +2,9 @@
 
 use Malico\Teams\Contracts\InvitesTeamMembers;
 use Malico\Teams\Contracts\RemovesTeamMembers;
+use Malico\Teams\Contracts\SendsTeamInvitations;
 use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Computed;
 use Livewire\Volt\Component;
 use Malico\Teams\Teams;
@@ -38,6 +40,8 @@ new class extends Component {
             return;
         }
 
+        Gate::authorize('addTeamMember', $currentTeam);
+
         app(InvitesTeamMembers::class)->invite($user, $currentTeam, $this->email, $this->role);
 
         $this->reset('email', 'role');
@@ -52,6 +56,8 @@ new class extends Component {
             return;
         }
 
+        Gate::authorize('removeTeamMember', $currentTeam);
+
         app(RemovesTeamMembers::class)->remove(auth()->user(), $currentTeam, $member);
 
         $this->dispatch('member-removed');
@@ -65,9 +71,28 @@ new class extends Component {
         if (!$currentTeam || !$invitation) {
             return;
         }
+
+        Gate::authorize('removeTeamMember', $currentTeam);
+
         $invitation->delete();
 
         $this->dispatch('invitation-cancelled');
+    }
+
+    public function resendInvitation($invitationId)
+    {
+        $currentTeam = auth()->user()->currentTeam;
+        $invitation = $currentTeam->invitations()->find($invitationId);
+
+        if (!$currentTeam || !$invitation) {
+            return;
+        }
+
+        Gate::authorize('addTeamMember', $currentTeam);
+
+        app(SendsTeamInvitations::class)->send($invitation);
+
+        $this->dispatch('invitation-resent');
     }
 };
 
@@ -79,59 +104,61 @@ new class extends Component {
     <x-teams.layout
         :heading="__('Team Members')"
         :subheading="__('Manage who has access to this team and their roles')"
-        permission="members.view"
+        permission="team:members:view"
     >
         @if ($this->team)
             <div class="my-8 w-full space-y-8">
                 <!-- Add Member Form -->
-                <div class="bg-white border border-zinc-200 rounded-xl p-8 shadow-sm">
-                    <div class="mb-6">
-                        <flux:heading class="text-zinc-900" size="sm">{{ __('Invite New Member') }}</flux:heading>
-                        <p class="text-zinc-600 text-sm mt-1">{{ __('Send an invitation to add someone to your team') }}</p>
-                    </div>
+                @can('addTeamMember', $this->team)
+                    <div class="bg-white border border-zinc-200 rounded-xl p-8 shadow-sm">
+                        <div class="mb-6">
+                            <flux:heading class="text-zinc-900" size="sm">{{ __('Invite New Member') }}</flux:heading>
+                            <p class="text-zinc-600 text-sm mt-1">{{ __('Send an invitation to add someone to your team') }}</p>
+                        </div>
 
-                    <form class="space-y-6" wire:submit="inviteTeamMember">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <flux:input
-                                    :label="__('Email Address')"
-                                    placeholder="{{ __('Enter email address') }}"
-                                    required
-                                    type="email"
-                                    wire:model="email"
-                                />
+                        <form class="space-y-6" method="POST" wire:submit="inviteTeamMember">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <flux:input
+                                        :label="__('Email Address')"
+                                        placeholder="{{ __('Enter email address') }}"
+                                        required
+                                        type="email"
+                                        wire:model="email"
+                                    />
+                                </div>
+                                <div>
+                                    <flux:select
+                                        :label="__('Role')"
+                                        required
+                                        wire:model="role"
+                                    >
+                                        @foreach (Teams::getRoles() as $role)
+                                            <option value="{{ $role->key }}">
+                                                {{ $role->name }}
+                                            </option>
+                                        @endforeach
+                                    </flux:select>
+                                </div>
                             </div>
-                            <div>
-                                <flux:select
-                                    :label="__('Role')"
-                                    required
-                                    wire:model="role"
+
+                            <div class="flex items-center justify-between pt-2">
+                                <flux:button
+                                    size="sm"
+                                    type="submit"
+                                    variant="primary"
+                                    class="px-6"
                                 >
-                                    @foreach (Teams::getRoles() as $role)
-                                        <option value="{{ $role->key }}">
-                                            {{ $role->name }}
-                                        </option>
-                                    @endforeach
-                                </flux:select>
+                                    {{ __('Send Invite') }}
+                                </flux:button>
                             </div>
-                        </div>
 
-                        <div class="flex items-center justify-between pt-2">
-                            <flux:button
-                                size="sm"
-                                type="submit"
-                                variant="primary"
-                                class="px-6"
-                            >
-                                {{ __('Send Invite') }}
-                            </flux:button>
-                        </div>
-
-                        <x-action-message class="mt-4" on="member-invited">
-                            {{ __('Invitation sent successfully.') }}
-                        </x-action-message>
-                    </form>
-                </div>
+                            <x-action-message class="mt-4" on="member-invited">
+                                {{ __('Invitation sent successfully.') }}
+                            </x-action-message>
+                        </form>
+                    </div>
+                @endcan
 
                 <!-- Pending Invitations -->
                 @if ($this->invitations->count() > 0)
@@ -169,15 +196,29 @@ new class extends Component {
                                             <flux:badge color="amber" class="px-3">
                                                 {{ __('Pending') }}
                                             </flux:badge>
-                                            <flux:button
-                                                class="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                                size="sm"
-                                                variant="ghost"
-                                                wire:click="cancelInvitation({{ $invitation->id }})"
-                                                wire:confirm="{{ __('Are you sure you want to cancel this invitation?') }}"
-                                            >
-                                                {{ __('Cancel') }}
-                                            </flux:button>
+                                            @can('addTeamMember', $this->team)
+                                                <flux:button
+                                                    class="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    type="button"
+                                                    wire:click="resendInvitation({{ $invitation->id }})"
+                                                >
+                                                    {{ __('Resend') }}
+                                                </flux:button>
+                                            @endcan
+                                            @can('removeTeamMember', $this->team)
+                                                <flux:button
+                                                    class="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    type="button"
+                                                    wire:click="cancelInvitation({{ $invitation->id }})"
+                                                    wire:confirm="{{ __('Are you sure you want to cancel this invitation?') }}"
+                                                >
+                                                    {{ __('Cancel') }}
+                                                </flux:button>
+                                            @endcan
                                         </div>
                                     </div>
                                 </div>
@@ -186,6 +227,10 @@ new class extends Component {
 
                         <x-action-message class="mt-4" on="invitation-cancelled">
                             {{ __('Invitation cancelled successfully.') }}
+                        </x-action-message>
+
+                        <x-action-message class="mt-4" on="invitation-resent">
+                            {{ __('Invitation resent successfully.') }}
                         </x-action-message>
                     </div>
                 @endif
@@ -225,15 +270,17 @@ new class extends Component {
                                                 {{ __('Owner') }}
                                             </flux:badge>
                                         @else
-                                            <flux:button
-                                                class="text-red-600 hover:text-red-700 hover:bg-red-50"
-                                                size="sm"
-                                                variant="ghost"
-                                                wire:click="removeTeamMember({{ $member->id }})"
-                                                wire:confirm="{{ __('Are you sure you want to remove this member?') }}"
-                                            >
-                                                {{ __('Remove') }}
-                                            </flux:button>
+                                            @can('removeTeamMember', $this->team)
+                                                <flux:button
+                                                    class="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                                    size="sm"
+                                                    variant="ghost"
+                                                    wire:click="removeTeamMember({{ $member->id }})"
+                                                    wire:confirm="{{ __('Are you sure you want to remove this member?') }}"
+                                                >
+                                                    {{ __('Remove') }}
+                                                </flux:button>
+                                            @endcan
                                         @endif
                                     </div>
                                 </div>

@@ -28,5 +28,4 @@ class TeamInvitation extends Mailable
             'invitedByName' => $this->invitation->invitedBy?->name,
         ])->subject(__('You\'re invited to join :team', ['team' => $this->invitation->team->name]));
     }
-
 }
