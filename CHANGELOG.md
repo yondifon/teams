@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.0.6 - 2025-08-30
+
+**Full Changelog**: https://github.com/yondifon/teams/compare/0.0.5...0.0.6
+
 ## 0.0.5 - 2025-08-30
 
 **Full Changelog**: https://github.com/yondifon/teams/compare/0.0.4...0.0.5
