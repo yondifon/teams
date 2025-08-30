@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Malico\Teams\Membership as TeamsMembership;
+use Malico\Teams\Membership as BaseMembership;
 
-class Membership extends TeamsMembership
+class Membership extends BaseMembership
 {
     /**
      * Indicates if the IDs are auto-incrementing.

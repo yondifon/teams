@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Malico\Teams\Events\TeamCreated;
 use Malico\Teams\Events\TeamDeleted;
 use Malico\Teams\Events\TeamUpdated;
-use Malico\Teams\Team as TeamsTeam;
+use Malico\Teams\Team as BaseTeam;
 
-class Team extends TeamsTeam
+class Team extends BaseTeam
 {
     /** @use HasFactory<\Database\Factories\TeamFactory> */
     use HasFactory;

@@ -44,21 +44,18 @@ class TeamInvitationController extends Controller
 
     protected function handleUnauthenticatedUser($invitation)
     {
-        session([
-            'pending_invitation' => $invitation->id,
-            'invitation_email' => $invitation->email,
-        ]);
-
         $userModel = Teams::userModel();
         $userExists = $userModel::where('email', $invitation->email)->exists();
 
         if ($userExists) {
-            return redirect()->route('login', ['email' => $invitation->email])
-                ->with('message', __('Please sign in to accept your team invitation.'));
+            return redirect()->signedRoute('login', [
+                'invitation' => $invitation->id
+            ])->with('message', __('Please sign in to accept your team invitation.'));
         }
 
-        return redirect()->route('register', ['email' => $invitation->email])
-            ->with('message', __('Create an account to join the team.'));
+        return redirect()->signedRoute('register', [
+            'invitation' => $invitation->id
+        ])->with('message', __('Create an account to join the team.'));
     }
 
     /**

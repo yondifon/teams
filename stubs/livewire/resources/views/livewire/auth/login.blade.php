@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Livewire\Attributes\Layout;
@@ -23,30 +24,24 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
     public bool $remember = false;
     public ?TeamInvitation $pendingInvitation = null;
-    public bool $hasInvitation = false;
 
     public function mount(): void
     {
-        $this->email = request('email', '');
-
-        if (!session('pending_invitation')) {
+        $invitationId = request('invitation');
+        if (!$invitationId) {
             return;
         }
 
-        $this->pendingInvitation = TeamInvitation::find(session('pending_invitation'));
+        if (! request()->hasValidSignature()) {
+            abort(403, 'Invalid invitation link.');
+        }
+
+        $this->pendingInvitation = TeamInvitation::find($invitationId);
         if (!$this->pendingInvitation) {
             return;
         }
 
-        if (!User::where('email', $this->pendingInvitation->email)->exists()) {
-            $this->redirectRoute('register', ['email' => $this->pendingInvitation->email]);
-            return;
-        }
-
-        if ($this->pendingInvitation && $this->pendingInvitation->email === session('invitation_email')) {
-            $this->email = $this->pendingInvitation->email;
-            $this->hasInvitation = true;
-        }
+        $this->email = $this->pendingInvitation->email;
     }
 
     /**
@@ -55,18 +50,6 @@ new #[Layout('components.layouts.auth')] class extends Component {
     public function login(): void
     {
         $this->validate();
-
-        // Check if user exists and redirect to register if they don't
-        if (!User::where('email', $this->email)->exists()) {
-            if ($this->hasInvitation) {
-                $this->redirect(route('register', ['email' => $this->email]));
-                return;
-            }
-
-            throw ValidationException::withMessages([
-                'email' => __('No account found with this email address. Please create an account first.'),
-            ]);
-        }
 
         $this->ensureIsNotRateLimited();
 
@@ -81,27 +64,10 @@ new #[Layout('components.layouts.auth')] class extends Component {
         RateLimiter::clear($this->throttleKey());
         Session::regenerate();
 
-        // If user logged in with invitation, automatically accept it
-        if ($this->hasInvitation && $this->pendingInvitation) {
-            try {
-                app(AcceptsTeamInvitations::class)->accept(auth()->user(), $this->pendingInvitation);
+        if ($this->pendingInvitation) {
+            app(AcceptsTeamInvitations::class)->accept(auth()->user(), $this->pendingInvitation);
 
-                // Clear invitation session data
-                session()->forget(['pending_invitation', 'invitation_email']);
-
-                session()->flash(
-                    'message',
-                    __('Welcome back! You\'ve been added to :team.', [
-                        'team' => $this->pendingInvitation->team->name,
-                    ]),
-                );
-
-                $this->redirect(route('teams.show', $this->pendingInvitation->team), navigate: true);
-                return;
-            } catch (\Exception $e) {
-                // If invitation acceptance fails, still redirect to dashboard but show message
-                session()->flash('error', __('You\'ve been logged in successfully, but there was an issue accepting the team invitation. Please try again.'));
-            }
+            $this->redirect(route('teams.show', $this->pendingInvitation->team), navigate: true);
         }
 
         $this->redirectIntended(default: route('dashboard', absolute: false), navigate: true);
@@ -138,7 +104,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6">
-    @if ($hasInvitation && $pendingInvitation)
+    @if ($pendingInvitation)
         <x-auth-header :title="__('Sign in to join :team', ['team' => $pendingInvitation->team->name])" :description="__('Enter your password to sign in and join the team')" />
     @else
         <x-auth-header :title="__('Log in to your account')" :description="__('Enter your email and password below to log in')" />
@@ -157,9 +123,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
             autofocus
             autocomplete="email"
             placeholder="email@example.com"
-            :readonly="$hasInvitation"
-            :variant="$hasInvitation ? 'filled' : null"
-            :description="$hasInvitation ? __('Email address from your team invitation') : null"
+            :readonly="$pendingInvitation"
+            :variant="$pendingInvitation ? 'filled' : null"
+            :description="$pendingInvitation ? __('Email address from your team invitation') : null"
         />
 
         <!-- Password -->
@@ -186,7 +152,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         <div class="flex items-center justify-end">
             <flux:button variant="primary" type="submit" class="w-full">
-                {{ $hasInvitation ? __('Sign in & join team') : __('Log in') }}
+                {{ $pendingInvitation ? __('Sign in & join team') : __('Log in') }}
             </flux:button>
         </div>
     </form>

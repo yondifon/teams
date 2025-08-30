@@ -6,40 +6,57 @@ use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
 
 new #[Layout('components.layouts.auth')] class extends Component {
+    public ?TeamInvitation $pendingInvitation = null;
+
     public string $name = '';
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
-    public ?TeamInvitation $pendingInvitation = null;
-    public bool $hasInvitation = false;
 
     public function mount(): void
     {
-        $this->email = request('email', '');
-
-        if (!session('pending_invitation')) {
+        $invitationId = request('invitation');
+        if (!$invitationId) {
+            $this->email = request('email', '');
             return;
         }
 
-        $this->pendingInvitation = TeamInvitation::find(session('pending_invitation'));
+        if (!URL::hasValidSignature(request())) {
+            abort(403, 'Invalid invitation link.');
+        }
+
+        $this->pendingInvitation = TeamInvitation::find($invitationId);
         if (!$this->pendingInvitation) {
             return;
         }
 
+        $this->email = $this->pendingInvitation->email;
+
         if (User::where('email', $this->pendingInvitation->email)->exists()) {
-            $this->redirectRoute('login', ['email' => $this->pendingInvitation->email]);
+            $this->redirectRoute('login', [
+                'invitation' => $invitationId
+            ], navigate: true);
             return;
         }
+    }
 
-        if ($this->pendingInvitation && $this->pendingInvitation->email === session('invitation_email')) {
-            $this->email = $this->pendingInvitation->email;
-            $this->hasInvitation = true;
+    private function extraEmailRule()
+    {
+        if ($this->pendingInvitation) {
+            return function ($attribute, $value, $fail) {
+                if ($value !== $this->pendingInvitation->email) {
+                    $fail(__('Email must match the invitation email: :email', ['email' => $this->pendingInvitation->email]));
+                }
+            };
         }
+
+        return 'unique:' . User::class;
     }
 
     /**
@@ -47,29 +64,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     public function register(): void
     {
-        $rules = [
+        $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', $this->extraEmailRule()],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ];
-
-        // If user has invitation, email must match and can't be changed
-        if ($this->hasInvitation && $this->pendingInvitation) {
-            $rules['email'] = [
-                'required',
-                'string',
-                'lowercase',
-                'email',
-                'max:255',
-                function ($attribute, $value, $fail) {
-                    if ($value !== $this->pendingInvitation->email) {
-                        $fail(__('Email must match the invitation email: :email', ['email' => $this->pendingInvitation->email]));
-                    }
-                },
-            ];
-        }
-
-        $validated = $this->validate($rules);
+        ]);
         $validated['password'] = Hash::make($validated['password']);
 
         event(new Registered(($user = User::create($validated))));
@@ -77,26 +76,11 @@ new #[Layout('components.layouts.auth')] class extends Component {
         Auth::login($user);
 
         // If user registered with invitation, automatically accept it
-        if ($this->hasInvitation && $this->pendingInvitation) {
-            try {
-                app(AcceptsTeamInvitations::class)->accept($user, $this->pendingInvitation);
+        if ($this->pendingInvitation) {
+            app(AcceptsTeamInvitations::class)->accept($user, $this->pendingInvitation);
 
-                // Clear invitation session data
-                session()->forget(['pending_invitation', 'invitation_email']);
-
-                session()->flash(
-                    'message',
-                    __('Welcome to the team! Your account has been created and you\'ve been added to :team.', [
-                        'team' => $this->pendingInvitation->team->name,
-                    ]),
-                );
-
-                $this->redirect(route('teams.show', $this->pendingInvitation->team), navigate: true);
-                return;
-            } catch (\Exception $e) {
-                // If invitation acceptance fails, still redirect to dashboard but show message
-                session()->flash('error', __('Your account was created successfully, but there was an issue accepting the team invitation. Please try again.'));
-            }
+            $this->redirect(route('teams.show', $this->pendingInvitation->team), navigate: true);
+            return;
         }
 
         $this->redirectIntended(route('dashboard', absolute: false), navigate: true);
@@ -104,7 +88,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 }; ?>
 
 <div class="flex flex-col gap-6">
-    @if ($hasInvitation && $pendingInvitation)
+    @if ($pendingInvitation)
         <x-auth-header :title="__('Join :team', ['team' => $pendingInvitation->team->name])" :description="__('Create your account to join the team as :role', [
             'role' => $pendingInvitation->role?->name ?? 'member',
         ])" />
@@ -135,9 +119,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
             required
             autocomplete="email"
             placeholder="email@example.com"
-            :readonly="$hasInvitation"
-            :variant="$hasInvitation ? 'filled' : null"
-            :description="$hasInvitation ? __('Email address from your team invitation') : null"
+            :readonly="$pendingInvitation"
+            :variant="$pendingInvitation ? 'filled' : null"
+            :description="$pendingInvitation ? __('Email address from your team invitation') : null"
         />
 
         <!-- Password -->
@@ -164,7 +148,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 
         <div class="flex items-center justify-end">
             <flux:button type="submit" variant="primary" class="w-full">
-                {{ $hasInvitation ? __('Create account & join team') : __('Create account') }}
+                {{ $pendingInvitation ? __('Create account & join team') : __('Create account') }}
             </flux:button>
         </div>
     </form>

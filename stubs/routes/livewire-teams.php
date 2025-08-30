@@ -16,7 +16,7 @@ Route::group(['middleware' => ['auth']], function () {
         ->middleware(['auth', 'signed'])
         ->name('team-invitations.accept');
 
-    Route::put('/current-team', CurrentTeamController::class)->name('current-team.update');
+    // Route::put('/current-team', CurrentTeamController::class)->name('current-team.update');
 });
 
 // Public invitation URL - handles redirects
