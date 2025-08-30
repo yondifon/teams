@@ -115,7 +115,7 @@ new class extends Component {
                                 </flux:select>
                             </div>
                         </div>
-                        
+
                         <div class="flex items-center justify-between pt-2">
                             <flux:button
                                 size="sm"
@@ -149,7 +149,7 @@ new class extends Component {
                         <div class="bg-white border border-zinc-200 rounded-xl divide-y divide-zinc-100 shadow-sm">
                             @foreach ($this->invitations as $invitation)
                                 <div class="p-6 hover:bg-zinc-50 transition-colors">
-                                    <div class="flex items-center justify-between">
+                                    <div class="space-y-4">
                                         <div class="flex items-center gap-4">
                                             <div class="flex h-12 w-12 items-center justify-center rounded-full bg-amber-50 border border-amber-200">
                                                 <flux:icon class="size-6 text-amber-600" icon="clock" />
@@ -161,7 +161,7 @@ new class extends Component {
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
                                         <div class="flex items-center gap-3 flex-shrink-0">
                                             <flux:badge color="zinc" variant="outline" class="hidden sm:inline-flex">
                                                 {{ $invitation->role?->name ?? 'Member' }}
@@ -215,7 +215,7 @@ new class extends Component {
                                             <div class="text-zinc-500 text-sm mt-1 truncate">{{ $member->email }}</div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="flex items-center gap-3 flex-shrink-0">
                                         <flux:badge color="zinc" variant="outline" class="hidden sm:inline-flex">
                                             {{ $member->pivot->role?->name ?? 'member' }}
