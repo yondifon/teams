@@ -41,7 +41,7 @@ class CreateTeamTest extends TestCase
     public function test_it_validates_personal_team()
     {
         $user = $this->createUser();
-        $privateTeam = $this->createTeam([
+        $this->createTeam([
             'name' => 'Private Team',
             'user_id' => $user->id,
             'personal_team' => true,

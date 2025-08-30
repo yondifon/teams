@@ -104,7 +104,7 @@ class Teams
             ->values()
             ->all();
 
-        return tap(new Role($key, $name, $permissions), function ($role) use ($key) {
+        return tap(new Role($key, $name, $permissions), function ($role) use ($key): void {
             static::$roles[$key] = $role;
         });
     }
