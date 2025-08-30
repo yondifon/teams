@@ -3,11 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Malico\Teams\TeamInvitation as TeamsTeamInvitation;
-use Malico\Teams\Teams;
+use Malico\Teams\TeamInvitation as BaseTeamInvitation;
 
-class TeamInvitation extends TeamsTeamInvitation
+class TeamInvitation extends BaseTeamInvitation
 {
     use HasFactory;
 
@@ -19,13 +17,6 @@ class TeamInvitation extends TeamsTeamInvitation
     protected $fillable = [
         'email',
         'role',
+        'invited_by_id',
     ];
-
-    /**
-     * Get the team that the invitation belongs to.
-     */
-    public function team(): BelongsTo
-    {
-        return $this->belongsTo(Teams::teamModel());
-    }
 }

@@ -9,7 +9,6 @@ interface ValidatesTeamDeletion
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  mixed  $team
-     * @return void
      */
     public function validate($user, $team): void;
 }

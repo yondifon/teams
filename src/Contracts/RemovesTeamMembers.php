@@ -10,7 +10,6 @@ interface RemovesTeamMembers
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  mixed  $team
      * @param  mixed  $teamMember
-     * @return void
      */
     public function remove($user, $team, $teamMember): void;
 }

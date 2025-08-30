@@ -69,7 +69,7 @@ new class extends Component {
                     </div>
                     <h3 class="text-lg font-medium text-gray-900">{{ $invitation->team->name }}</h3>
                     <p class="text-sm text-gray-500 mt-1">
-                        {{ __('You have been invited to join this team as a :role', ['role' => $invitation->role ?? 'member']) }}
+                        {{ __('You have been invited to join this team as a :role', ['role' => $invitation->role?->name ?? 'member']) }}
                     </p>
                 </div>
 
@@ -82,7 +82,7 @@ new class extends Component {
                                 {{ __('This invitation was sent to :email, but you\'re signed in as :current. Please switch accounts to accept this invitation.', ['email' => $invitation->email, 'current' => auth()->user()->email]) }}
                             </div>
                         </div>
-                        
+
                         <flux:button
                             wire:click="switchToCorrectAccount"
                             variant="primary"

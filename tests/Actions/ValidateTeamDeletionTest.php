@@ -1,12 +1,12 @@
 <?php
 
-namespace Malico\Teams\Tests\Unit\Actions;
+namespace Malico\Teams\Tests\Actions;
 
 use Illuminate\Validation\ValidationException;
 use Malico\Teams\Actions\ValidateTeamDeletion;
-use Malico\Teams\Tests\Unit\ActionsTestCase;
+use Malico\Teams\Tests\TestCase;
 
-class ValidateTeamDeletionTest extends ActionsTestCase
+class ValidateTeamDeletionTest extends TestCase
 {
     public function test_it_validates_team_deletion_successfully()
     {

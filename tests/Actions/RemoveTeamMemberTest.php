@@ -1,15 +1,15 @@
 <?php
 
-namespace Malico\Teams\Tests\Unit\Actions;
+namespace Malico\Teams\Tests\Actions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Malico\Teams\Actions\RemoveTeamMember;
 use Malico\Teams\Events\TeamMemberRemoved;
-use Malico\Teams\Tests\Unit\ActionsTestCase;
+use Malico\Teams\Tests\TestCase;
 
-class RemoveTeamMemberTest extends ActionsTestCase
+class RemoveTeamMemberTest extends TestCase
 {
     public function test_it_removes_team_member_successfully()
     {
@@ -59,7 +59,6 @@ class RemoveTeamMemberTest extends ActionsTestCase
 
         (new RemoveTeamMember)->remove($user, $team, $teamMember);
     }
-
 
     public function test_it_dispatches_team_member_removed_event()
     {

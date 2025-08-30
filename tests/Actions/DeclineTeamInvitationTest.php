@@ -1,12 +1,12 @@
 <?php
 
-namespace Malico\Teams\Tests\Unit\Actions;
+namespace Malico\Teams\Tests\Actions;
 
 use Illuminate\Validation\ValidationException;
 use Malico\Teams\Actions\DeclineTeamInvitation;
-use Malico\Teams\Tests\Unit\ActionsTestCase;
+use Malico\Teams\Tests\TestCase;
 
-class DeclineTeamInvitationTest extends ActionsTestCase
+class DeclineTeamInvitationTest extends TestCase
 {
     public function test_it_declines_team_invitation_successfully()
     {

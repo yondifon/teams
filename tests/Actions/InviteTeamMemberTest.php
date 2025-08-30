@@ -1,6 +1,6 @@
 <?php
 
-namespace Malico\Teams\Tests\Unit\Actions;
+namespace Malico\Teams\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Mail;
@@ -8,9 +8,9 @@ use Illuminate\Validation\ValidationException;
 use Malico\Teams\Actions\InviteTeamMember;
 use Malico\Teams\Events\InvitingTeamMember;
 use Malico\Teams\Mail\TeamInvitation;
-use Malico\Teams\Tests\Unit\ActionsTestCase;
+use Malico\Teams\Tests\TestCase;
 
-class InviteTeamMemberTest extends ActionsTestCase
+class InviteTeamMemberTest extends TestCase
 {
     public function test_it_invites_a_team_member_successfully()
     {
@@ -83,5 +83,4 @@ class InviteTeamMemberTest extends ActionsTestCase
 
         (new InviteTeamMember)->invite($user, $team, 'newmember@example.com', 'member');
     }
-
 }

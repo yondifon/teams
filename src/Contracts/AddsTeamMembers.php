@@ -2,6 +2,8 @@
 
 namespace Malico\Teams\Contracts;
 
+use Malico\Teams\Role;
+
 interface AddsTeamMembers
 {
     /**
@@ -9,9 +11,6 @@ interface AddsTeamMembers
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  mixed  $team
-     * @param  string  $email
-     * @param  string|null  $role
-     * @return void
      */
-    public function add($user, $team, string $email, ?string $role = null): void;
+    public function add($user, $team, string $email, Role|string|null $role = null): void;
 }

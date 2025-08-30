@@ -10,7 +10,6 @@ interface UpdatesTeamNames
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  mixed  $team
      * @param  array<string, string>  $input
-     * @return void
      */
     public function update($user, $team, array $input): void;
 }

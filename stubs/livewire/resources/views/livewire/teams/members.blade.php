@@ -152,7 +152,7 @@ new class extends Component {
                                         </div>
                                     </div>
                                     <div class="flex items-center gap-3">
-                                        <flux:badge color="yellow">{{ $invitation->role->code ?? 'Member' }}
+                                        <flux:badge color="yellow">{{ $invitation->role?->name ?? 'Member' }}
                                         </flux:badge>
                                         <flux:badge color="yellow">{{ __('Pending') }}</flux:badge>
                                         <flux:button
@@ -196,7 +196,7 @@ new class extends Component {
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-3">
-                                    <flux:badge>{{ $member->pivot->role ?? 'member' }}</flux:badge>
+                                    <flux:badge>{{ $member->pivot->role?->name ?? 'member' }}</flux:badge>
                                     @if ($member->id === $this->team->owner->id)
                                         <flux:badge color="blue">{{ __('Owner') }}</flux:badge>
                                     @else

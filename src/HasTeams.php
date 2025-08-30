@@ -2,8 +2,8 @@
 
 namespace Malico\Teams;
 
-use Illuminate\Support\Str;
-use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 trait HasTeams
 {
@@ -11,9 +11,8 @@ trait HasTeams
      * Determine if the given team is the current team.
      *
      * @param  mixed  $team
-     * @return bool
      */
-    public function isCurrentTeam($team)
+    public function isCurrentTeam($team): bool
     {
         return $team->id === $this->currentTeam->id;
     }
@@ -36,9 +35,8 @@ trait HasTeams
      * Switch the user's context to the given team.
      *
      * @param  mixed  $team
-     * @return bool
      */
-    public function switchTeam($team)
+    public function switchTeam($team): bool
     {
         if (! $this->belongsToTeam($team)) {
             return false;
@@ -65,20 +63,16 @@ trait HasTeams
 
     /**
      * Get all of the teams the user owns.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function ownedTeams()
+    public function ownedTeams(): HasMany
     {
         return $this->hasMany(Teams::teamModel());
     }
 
     /**
      * Get all of the teams the user belongs to.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function teams()
+    public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Teams::teamModel(), Teams::membershipModel())
             ->withPivot('role')
@@ -100,9 +94,8 @@ trait HasTeams
      * Determine if the user owns the given team.
      *
      * @param  mixed  $team
-     * @return bool
      */
-    public function ownsTeam($team)
+    public function ownsTeam($team): bool
     {
         if (is_null($team)) {
             return false;
@@ -115,9 +108,8 @@ trait HasTeams
      * Determine if the user belongs to the given team.
      *
      * @param  mixed  $team
-     * @return bool
      */
-    public function belongsToTeam($team)
+    public function belongsToTeam($team): bool
     {
         if (is_null($team)) {
             return false;
@@ -132,51 +124,51 @@ trait HasTeams
      * Get the role that the user has on the team.
      *
      * @param  mixed  $team
-     * @return \Malico\Teams\Role|null
      */
-    public function teamRole($team)
+    public function teamRole($team): ?Role
     {
         if ($this->ownsTeam($team)) {
             return new OwnerRole;
         }
 
         if (! $this->belongsToTeam($team)) {
-            return;
+            return null;
         }
 
-        $role = $team->users
+        return $team->users
             ->where('id', $this->id)
             ->first()
             ->membership
             ->role;
-
-        return $role ? Teams::findRole($role) : null;
     }
 
     /**
      * Determine if the user has the given role on the given team.
      *
      * @param  mixed  $team
-     * @return bool
      */
-    public function hasTeamRole($team, string $role)
+    public function hasTeamRole($team, string $role): bool
     {
         if ($this->ownsTeam($team)) {
             return true;
         }
 
-        return $this->belongsToTeam($team) && optional(Teams::findRole($team->users->where(
-            'id', $this->id
-        )->first()->membership->role))->key === $role;
+        return $this->belongsToTeam($team)
+            && optional(
+                $team->users
+                    ->where('id', $this->id)
+                    ->first()
+                    ->membership
+                    ->role
+            )->key === $role;
     }
 
     /**
      * Get the user's permissions for the given team.
      *
      * @param  mixed  $team
-     * @return array
      */
-    public function teamPermissions($team)
+    public function teamPermissions($team): array
     {
         if ($this->ownsTeam($team)) {
             return ['*'];
@@ -193,9 +185,8 @@ trait HasTeams
      * Determine if the user has the given permission on the given team.
      *
      * @param  mixed  $team
-     * @return bool
      */
-    public function hasTeamPermission($team, string $permission)
+    public function hasTeamPermission($team, string $permission): bool
     {
         if ($this->ownsTeam($team)) {
             return true;
@@ -205,17 +196,6 @@ trait HasTeams
             return false;
         }
 
-        if (in_array(HasApiTokens::class, class_uses_recursive($this)) &&
-            ! $this->tokenCan($permission) &&
-            $this->currentAccessToken() !== null) {
-            return false;
-        }
-
-        $permissions = $this->teamPermissions($team);
-
-        return in_array($permission, $permissions) ||
-               in_array('*', $permissions) ||
-               (Str::endsWith($permission, ':create') && in_array('*:create', $permissions)) ||
-               (Str::endsWith($permission, ':update') && in_array('*:update', $permissions));
+        return Permission::hasPermission($this->teamPermissions($team), $permission);
     }
 }

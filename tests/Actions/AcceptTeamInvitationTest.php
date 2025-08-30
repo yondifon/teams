@@ -1,15 +1,15 @@
 <?php
 
-namespace Malico\Teams\Tests\Unit\Actions;
+namespace Malico\Teams\Tests\Actions;
 
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Malico\Teams\Actions\AcceptTeamInvitation;
 use Malico\Teams\Events\TeamMemberAdded;
-use Malico\Teams\Tests\Unit\ActionsTestCase;
+use Malico\Teams\Tests\TestCase;
 
-class AcceptTeamInvitationTest extends ActionsTestCase
+class AcceptTeamInvitationTest extends TestCase
 {
     public function test_it_accepts_team_invitation_successfully()
     {

@@ -2,7 +2,6 @@
 
 namespace Malico\Teams\Actions;
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Malico\Teams\Contracts\AcceptsTeamInvitations;
 use Malico\Teams\Events\TeamMemberAdded;

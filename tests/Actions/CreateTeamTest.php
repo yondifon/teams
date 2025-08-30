@@ -1,6 +1,6 @@
 <?php
 
-namespace Malico\Teams\Tests\Unit\Actions;
+namespace Malico\Teams\Tests\Actions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Event;
@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Malico\Teams\Actions\CreateTeam;
 use Malico\Teams\Events\AddingTeam;
-use Malico\Teams\Tests\Unit\ActionsTestCase;
+use Malico\Teams\Tests\TestCase;
 
-class CreateTeamTest extends ActionsTestCase
+class CreateTeamTest extends TestCase
 {
     public function test_it_creates_a_team_successfully()
     {

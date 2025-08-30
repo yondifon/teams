@@ -9,7 +9,6 @@ interface DeclinesTeamInvitations
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  mixed  $invitation
-     * @return void
      */
     public function decline($user, $invitation): void;
 }

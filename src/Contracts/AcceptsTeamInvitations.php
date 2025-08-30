@@ -9,7 +9,6 @@ interface AcceptsTeamInvitations
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  mixed  $invitation
-     * @return void
      */
     public function accept($user, $invitation): void;
 }

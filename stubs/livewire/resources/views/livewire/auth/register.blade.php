@@ -106,7 +106,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
 <div class="flex flex-col gap-6">
     @if ($hasInvitation && $pendingInvitation)
         <x-auth-header :description="__('Create your account to join the team as :role', [
-            'role' => $pendingInvitation->role ?? 'member',
+            'role' => $pendingInvitation->role?->name ?? 'member',
         ])" :title="__('Join :team', ['team' => $pendingInvitation->team->name])" />
     @else
         <x-auth-header :description="__('Enter your details below to create your account')" :title="__('Create an account')" />

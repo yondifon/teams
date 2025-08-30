@@ -11,6 +11,7 @@ use Illuminate\Validation\Rule;
 use Malico\Teams\Contracts\InvitesTeamMembers;
 use Malico\Teams\Events\InvitingTeamMember;
 use Malico\Teams\Mail\TeamInvitation;
+use Malico\Teams\Role as TeamsRole;
 use Malico\Teams\Rules\Role;
 use Malico\Teams\Teams;
 
@@ -19,7 +20,7 @@ class InviteTeamMember implements InvitesTeamMembers
     /**
      * Invite a new team member to the given team.
      */
-    public function invite($user, $team, string $email, ?string $role = null): void
+    public function invite($user, $team, string $email, TeamsRole|string|null $role = null)
     {
         Gate::forUser($user)->authorize('addTeamMember', $team);
 
@@ -33,13 +34,17 @@ class InviteTeamMember implements InvitesTeamMembers
         ]);
 
         Mail::to($email)->send(new TeamInvitation($invitation));
+
+        return $invitation;
     }
 
     /**
      * Validate the invite member operation.
      */
-    protected function validate($team, string $email, ?string $role): void
+    protected function validate($team, string $email, TeamsRole|string|null $role): void
     {
+        $role = $role instanceof TeamsRole ? $role->key : $role;
+
         Validator::make([
             'email' => $email,
             'role' => $role,

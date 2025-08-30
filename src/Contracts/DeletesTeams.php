@@ -9,7 +9,6 @@ interface DeletesTeams
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
      * @param  mixed  $team
-     * @return void
      */
     public function delete($user, $team): void;
 }

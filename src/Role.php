@@ -7,44 +7,17 @@ use JsonSerializable;
 class Role implements JsonSerializable
 {
     /**
-     * The key identifier for the role.
-     *
-     * @var string
+     * @param  string  $key  The key of the role.
+     * @param  string  $name  The name of the role.
+     * @param  array  $permissions  The permissions that are assigned to the role.
+     * @param  string  $description  The description of the role.
      */
-    public $key;
-
-    /**
-     * The name of the role.
-     *
-     * @var string
-     */
-    public $name;
-
-    /**
-     * The role's permissions.
-     *
-     * @var array
-     */
-    public $permissions;
-
-    /**
-     * The role's description.
-     *
-     * @var string
-     */
-    public $description;
-
-    /**
-     * Create a new role instance.
-     *
-     * @return void
-     */
-    public function __construct(string $key, string $name, array $permissions)
-    {
-        $this->key = $key;
-        $this->name = $name;
-        $this->permissions = $permissions;
-    }
+    public function __construct(
+        public string $key,
+        public string $name,
+        public array $permissions,
+        public string $description = ''
+    ) {}
 
     /**
      * Describe the role.
