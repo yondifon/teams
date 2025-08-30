@@ -1,23 +1,23 @@
 # Laravel Teams
 
-A comprehensive team management package for Laravel applications that provides robust multi-tenant functionality with support for team creation, member management, invitations, and role-based permissions.
+A Laravel package that provides team management functionality for multi-tenant applications. Create teams, manage members, send invitations, and handle role-based permissions with a simple, extensible API.
 
 ## Features
 
-- **Team Management**: Complete team creation, updating, and deletion functionality
-- **Member Management**: Add, remove, and manage team members with role-based access control
-- **Team Invitations**: Email-based invitation system with acceptance and decline workflows
-- **Role & Permission System**: Flexible role definitions with granular permission control
-- **Multi-Stack Support**: Compatible with both Livewire and Inertia.js implementations
-- **Event-Driven Architecture**: Comprehensive event system for custom business logic integration
-- **Personal Teams**: Automatic personal team creation for new users
-- **Authorization Policies**: Built-in policy classes for secure team operations
-- **Testing Support**: Full Pest testing framework integration with comprehensive test coverage
+-   **Team Management**: Create, update, and delete teams with owner relationships
+-   **Member Management**: Add and remove team members with role assignments
+-   **Email Invitations**: Send team invitations via email with signed URLs
+-   **Role-Based Permissions**: Flexible role system with custom permissions
+-   **Personal Teams**: Support for personal teams alongside collaborative teams
+-   **Current Team Context**: Switch between teams with user context management
+-   **Event System**: Events for all team operations (adding, removing, inviting, etc.)
+-   **Multi-Stack Support**: Livewire components included, Inertia.js support planned
+-   **Authorization**: Built-in policies and gates for secure operations
 
 ## Requirements
 
-- PHP 8.1 or higher
-- Laravel 11.0 or higher
+-   PHP 8.2 or higher
+-   Laravel 11.0 or 12.0
 
 ## Installation
 
@@ -27,18 +27,28 @@ Install the package via Composer:
 composer require malico/teams
 ```
 
-Run the installation command to publish migrations, models, and configuration files:
+Run the installation command to set up the package:
 
 ```bash
 php artisan teams:install
 ```
 
+Available installation options:
+
+```bash
+php artisan teams:install --stack=livewire    # Install Livewire components
+php artisan teams:install --stack=inertia     # Install Inertia.js components (coming soon)
+php artisan teams:install --override          # Override auth files with team invitation support
+```
+
 The installation process will:
 
-- Publish and run database migrations
-- Publish configuration files
-- Create necessary stub files for your chosen stack (Livewire or Inertia.js)
-- Set up authentication overrides with team invitation support
+-   Publish database migrations for teams, memberships, and invitations
+-   Copy model stubs (Team, TeamInvitation, Membership, User)
+-   Install the TeamsServiceProvider
+-   Copy policy and listener classes
+-   Set up frontend components for your chosen stack
+-   Add team routes to your application
 
 ## Configuration
 
@@ -64,21 +74,13 @@ class User extends Authenticatable
 
 ### Team Roles Configuration
 
-Define team roles in your application's service provider:
+Define team roles in your TeamsServiceProvider or AppServiceProvider:
 
 ```php
 use Malico\Teams\Teams;
 
 public function boot(): void
 {
-    Teams::role('owner', 'Owner', [
-        'team:read',
-        'team:update',
-        'team:delete',
-        'team:invite-members',
-        'team:remove-members',
-    ])->description('Team owner with full administrative access');
-
     Teams::role('admin', 'Administrator', [
         'team:read',
         'team:update',
@@ -92,34 +94,63 @@ public function boot(): void
 }
 ```
 
+**Note**: Team owners automatically have all permissions (`['*']`) and don't need to be explicitly defined.
+
 ## Usage
 
 ### Creating Teams
 
 ```php
-use App\Actions\Teams\CreateTeam;
+use Malico\Teams\Contracts\CreatesTeams;
 
-$team = app(CreateTeam::class)->create($user, [
+// Create a regular team
+$team = app(CreatesTeams::class)->create($user, [
     'name' => 'Development Team',
-    'description' => 'Main development team for the project',
+]);
+
+// Create a personal team
+$personalTeam = app(CreatesTeams::class)->create($user, [
+    'name' => 'John\'s Personal Team',
+    'personal_team' => true,
 ]);
 ```
 
 ### Managing Team Members
 
 ```php
-use App\Actions\Teams\InviteTeamMember;
-use App\Actions\Teams\AcceptTeamInvitation;
-use App\Actions\Teams\DeclineTeamInvitation;
+use Malico\Teams\Contracts\InvitesTeamMembers;
+use Malico\Teams\Contracts\AcceptsTeamInvitations;
+use Malico\Teams\Contracts\DeclinesTeamInvitations;
+use Malico\Teams\Contracts\AddsTeamMembers;
+use Malico\Teams\Contracts\RemovesTeamMembers;
 
-// Invite a team member
-app(InviteTeamMember::class)->invite($user, $team, 'developer@example.com', 'admin');
+// Invite a team member (sends email)
+app(InvitesTeamMembers::class)->invite($user, $team, 'developer@example.com', 'admin');
+
+// Add a team member directly (if user exists)
+app(AddsTeamMembers::class)->add($teamOwner, $team, 'existing@example.com', 'member');
+
+// Remove a team member
+app(RemovesTeamMembers::class)->remove($user, $team, $memberUser);
 
 // Accept an invitation
-app(AcceptTeamInvitation::class)->accept($user, $teamInvitation);
+app(AcceptsTeamInvitations::class)->accept($user, $teamInvitation);
 
 // Decline an invitation
-app(DeclineTeamInvitation::class)->decline($teamInvitation);
+app(DeclinesTeamInvitations::class)->decline($user, $teamInvitation);
+```
+
+### Updating Teams
+
+```php
+use Malico\Teams\Contracts\UpdatesTeamNames;
+use Malico\Teams\Contracts\UpdatesTeamMemberRoles;
+
+// Update team name
+app(UpdatesTeamNames::class)->update($user, $team, ['name' => 'New Team Name']);
+
+// Update member role
+app(UpdatesTeamMemberRoles::class)->update($user, $team, $memberId, 'admin');
 ```
 
 ### Checking Team Permissions
@@ -150,68 +181,152 @@ $currentTeam = $user->currentTeam;
 // Switch to a different team
 $user->switchTeam($team);
 
-// Get all user's teams
+// Get all user's teams (owned + member)
 $teams = $user->allTeams();
 
-// Get teams where user owns
+// Get teams the user owns
 $ownedTeams = $user->ownedTeams;
 
-// Get teams where user is a member
+// Get teams where user is a member (not owner)
 $memberTeams = $user->teams;
+
+// Get user's personal team
+$personalTeam = $user->personalTeam();
+
+// Check if team is user's current team
+if ($user->isCurrentTeam($team)) {
+    // This is the active team
+}
+```
+
+### Deleting Teams
+
+```php
+use Malico\Teams\Contracts\DeletesTeams;
+
+// Delete a team (validates permissions first)
+app(DeletesTeams::class)->delete($user, $team);
 ```
 
 ## Frontend Integration
 
-This package supports both Livewire and Inertia.js stacks. The installation command will scaffold the appropriate components based on your selection.
+This package supports Livewire with planned Inertia.js support. The installation command will scaffold the appropriate components.
 
 ### Livewire Stack
 
-After installation, you'll have Livewire components for:
+After installation with `--stack=livewire`, you'll have:
 
-- Team creation and management
-- Member invitation and management
-- Team switching interface
-- Invitation acceptance/decline pages
+-   **Volt Components**: Functional Livewire components in `resources/views/pages/teams/`
 
-### Inertia.js Stack (coming soon)
+    -   `create.blade.php` - Team creation form
+    -   `show.blade.php` - Team management interface
+    -   `members.blade.php` - Member management
+    -   `accept-invitation.blade.php` - Invitation acceptance
+    -   `index.blade.php` - Teams listing
 
-After installation, you'll have Vue.js components and controllers for:
+-   **Supporting Views**:
 
-- Team management interfaces
-- Member management
-- Invitation handling
-- Team switching functionality
+    -   `components/teams/layout.blade.php` - Team layout component
+    -   `partials/teams-heading.blade.php` - Team navigation partial
+    -   `emails/team-invitation.blade.php` - Email template
+
+-   **Routes**: Team routes added to `routes/teams.php`
+
+### Inertia.js Stack
+
+Support for Inertia.js (React/Vue) components is planned for future releases.
 
 ## Events
 
 The package dispatches several events that you can listen to:
 
-- `TeamCreated`: Fired when a team is created
-- `TeamUpdated`: Fired when a team is updated
-- `TeamDeleted`: Fired when a team is deleted
-- `TeamMemberAdded`: Fired when a member is added to a team
-- `TeamMemberRemoved`: Fired when a member is removed from a team
-- `TeamInvitationSent`: Fired when an invitation is sent
-- `TeamInvitationAccepted`: Fired when an invitation is accepted
-- `TeamInvitationDeclined`: Fired when an invitation is declined
+**Team Events**:
 
-## Testing
+-   `AddingTeam`: Before creating a team
+-   `TeamCreated`: After a team is created
+-   `TeamUpdated`: After a team is updated
+-   `TeamDeleted`: After a team is deleted
 
-The package includes comprehensive test coverage using the Pest testing framework. You can run the tests using:
+**Member Events**:
 
-```bash
-composer test
-```
+-   `AddingTeamMember`: Before adding a member
+-   `TeamMemberAdded`: After a member is added
+-   `RemovingTeamMember`: Before removing a member
+-   `TeamMemberRemoved`: After a member is removed
+-   `TeamMemberUpdated`: After a member's role is updated
+
+**Invitation Events**:
+
+-   `InvitingTeamMember`: When sending an invitation
 
 ## Authorization
 
-The package includes authorization policies for secure team operations:
+The package includes authorization policies and gates:
 
-- `TeamPolicy`: Controls team-level operations
+-   **TeamPolicy**: Controls team-level operations (view, update, delete, addTeamMember, etc.)
+-   **Gates**: Automatic policy registration for team operations
+-   **Middleware**: Built-in authorization checks in all actions
+
+## Customization
+
+### Override Default Actions
+
+You can override any action in your `TeamsServiceProvider`:
+
+```php
+use Malico\Teams\Teams;
+
+public function boot(): void
+{
+    Teams::createTeamsUsing(CustomCreateTeam::class);
+    Teams::inviteTeamMembersUsing(CustomInviteTeamMember::class);
+    // ... other actions
+}
+```
+
+### Customize Models
+
+You can specify custom models:
+
+```php
+use Malico\Teams\Teams;
+
+Teams::useUserModel(App\Models\CustomUser::class);
+Teams::useTeamModel(App\Models\CustomTeam::class);
+Teams::useTeamInvitationModel(App\Models\CustomTeamInvitation::class);
+Teams::useMembershipModel(App\Models\CustomMembership::class);
+```
+
+### Configure Invitation Duration
+
+```php
+Teams::invitationDurationDays(14); // Default is 7 days
+```
+
+## Available Contracts
+
+The package provides these contracts for dependency injection:
+
+-   `CreatesTeams`
+-   `UpdatesTeamNames`
+-   `DeletesTeams`
+-   `ValidatesTeamDeletion`
+-   `AddsTeamMembers`
+-   `RemovesTeamMembers`
+-   `InvitesTeamMembers`
+-   `AcceptsTeamInvitations`
+-   `DeclinesTeamInvitations`
+-   `UpdatesTeamMemberRoles`
+
+## Testing
+
+Run the package tests:
+
+```bash
+phpunit
+```
 
 ## Contributing
-
-Contributions are welcome. Please ensure that your code follows Laravel conventions and includes appropriate test coverage.
 
 1. Fork the repository
 2. Create a feature branch
@@ -219,10 +334,12 @@ Contributions are welcome. Please ensure that your code follows Laravel conventi
 4. Ensure all tests pass
 5. Submit a pull request
 
-## Security
-
-If you discover any security-related issues, please email the maintainer instead of using the issue tracker.
-
 ## Credits
 
-This package was extracted and enhanced from Laravel Jetstream's team functionality to provide a standalone, framework-agnostic solution for team management in Laravel applications.
+This package is a fork of [Laravel Jetstream](https://github.com/laravel/jetstream) teams functionality, extracted into a standalone package for use in any Laravel application.
+
+Special thanks to the Laravel team and contributors for the original implementation.
+
+## License
+
+The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
