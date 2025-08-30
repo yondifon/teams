@@ -22,7 +22,7 @@ class CreateTeam implements CreatesTeams
 
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'personal_team' => ['boolean', function ($attribute, $value, $fail) use ($user) {
+            'personal_team' => ['boolean', function ($attribute, $value, $fail) use ($user): void {
                 $hasPersonal = Teams::teamModel()::query()
                     ->where('personal_team', true)
                     ->where('user_id', $user->id)

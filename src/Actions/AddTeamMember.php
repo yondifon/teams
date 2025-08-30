@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Validator;
 use Malico\Teams\Contracts\AddsTeamMembers;
 use Malico\Teams\Events\AddingTeamMember;
 use Malico\Teams\Events\TeamMemberAdded;
+use Malico\Teams\Role as TeamsRole;
 use Malico\Teams\Rules\Role;
 use Malico\Teams\Teams;
 
@@ -16,7 +17,7 @@ class AddTeamMember implements AddsTeamMembers
     /**
      * Add a new team member to the given team.
      */
-    public function add($user, $team, string $email, ?string $role = null): void
+    public function add($user, $team, string $email, TeamsRole|string|null $role = null): void
     {
         Gate::forUser($user)->authorize('addTeamMember', $team);
 
@@ -36,8 +37,10 @@ class AddTeamMember implements AddsTeamMembers
     /**
      * Validate the add member operation.
      */
-    protected function validate($team, string $email, ?string $role): void
+    protected function validate($team, string $email, TeamsRole|string|null $role): void
     {
+        $role = $role instanceof TeamsRole ? $role->key : $role;
+
         Validator::make([
             'email' => $email,
             'role' => $role,
@@ -68,7 +71,7 @@ class AddTeamMember implements AddsTeamMembers
      */
     protected function ensureUserIsNotAlreadyOnTeam($team, string $email): Closure
     {
-        return function ($validator) use ($team, $email) {
+        return function ($validator) use ($team, $email): void {
             $validator->errors()->addIf(
                 $team->hasUserWithEmail($email),
                 'email',

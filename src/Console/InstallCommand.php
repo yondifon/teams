@@ -48,7 +48,7 @@ class InstallCommand extends Command
 
         //  TODO: use vendor:publish for routes.
         $routeStub = $stack === 'livewire' ? 'livewire-teams.php' : 'inertia-teams.php';
-        copy($this->stubsPath('routes/'.$routeStub), base_path('routes/teams.php'));
+        $this->copy($this->stubsPath('routes/'.$routeStub), base_path('routes/teams.php'));
         $this->includeTeamsRoutesInWebPhp();
 
         if ($stack === 'livewire') {
@@ -90,31 +90,31 @@ class InstallCommand extends Command
     protected function installBackendComponents()
     {
         // Service Providers...
-        copy($this->stubsPath('app/Providers/TeamsServiceProvider.php'), app_path('Providers/TeamsServiceProvider.php'));
+        $this->copy($this->stubsPath('app/Providers/TeamsServiceProvider.php'), app_path('Providers/TeamsServiceProvider.php'));
         ServiceProvider::addProviderToBootstrapFile('App\Providers\TeamsServiceProvider');
 
         $this->callSilent('vendor:publish', ['--tag' => 'teams-migrations', '--force' => true]);
 
         // Models...
-        copy($this->stubsPath('app/Models/Membership.php'), app_path('Models/Membership.php'));
-        copy($this->stubsPath('app/Models/Team.php'), app_path('Models/Team.php'));
-        copy($this->stubsPath('app/Models/TeamInvitation.php'), app_path('Models/TeamInvitation.php'));
-        copy($this->stubsPath('app/Models/User.php'), app_path('Models/User.php'));
+        $this->copy($this->stubsPath('app/Models/Membership.php'), app_path('Models/Membership.php'));
+        $this->copy($this->stubsPath('app/Models/Team.php'), app_path('Models/Team.php'));
+        $this->copy($this->stubsPath('app/Models/TeamInvitation.php'), app_path('Models/TeamInvitation.php'));
+        $this->copy($this->stubsPath('app/Models/User.php'), app_path('Models/User.php'));
 
         // Factories...
-        copy(__DIR__.'/../../database/factories/UserFactory.php', base_path('database/factories/UserFactory.php'));
-        copy(__DIR__.'/../../database/factories/TeamFactory.php', base_path('database/factories/TeamFactory.php'));
+        $this->copy(__DIR__.'/../../database/factories/UserFactory.php', base_path('database/factories/UserFactory.php'));
+        $this->copy(__DIR__.'/../../database/factories/TeamFactory.php', base_path('database/factories/TeamFactory.php'));
 
         // Actions are now provided by the package as defaults
         // Users can override them in their TeamsServiceProvider if needed
 
         // Policies...
         (new Filesystem)->ensureDirectoryExists(app_path('Policies'));
-        (new Filesystem)->copy($this->stubsPath('app/Policies/TeamPolicy.php'), app_path('Policies/TeamPolicy.php'));
+        $this->copy($this->stubsPath('app/Policies/TeamPolicy.php'), app_path('Policies/TeamPolicy.php'));
 
         // Listeners...
         (new Filesystem)->ensureDirectoryExists(app_path('Listeners'));
-        (new Filesystem)->copy($this->stubsPath('app/Listeners/CreatePersonalTeam.php'), app_path('Listeners/CreatePersonalTeam.php'));
+        $this->copy($this->stubsPath('app/Listeners/CreatePersonalTeam.php'), app_path('Listeners/CreatePersonalTeam.php'));
     }
 
     /**
@@ -133,42 +133,35 @@ class InstallCommand extends Command
         (new Filesystem)->ensureDirectoryExists(resource_path('views/livewire'));
         (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/views/livewire/teams'), resource_path('views/livewire/teams'));
 
-        // Override auth files if requested
-        if ($this->option('override')) {
-            $this->publishAuthOverrides();
-        }
+        // Livewire components
+        (new Filesystem)->ensureDirectoryExists(resource_path('views/livewire/components'));
+        $this->copy(
+            $this->stubsPath('livewire/resources/views/livewire/components/team-switcher.blade.php'),
+            resource_path('views/livewire/components/team-switcher.blade.php')
+        );
+
+        // Ensure auth directory exists
+        (new Filesystem)->ensureDirectoryExists(resource_path('views/livewire/auth'));
+        $this->copy(
+            $this->stubsPath('livewire/resources/views/livewire/auth/register.blade.php'),
+            resource_path('views/livewire/auth/register.blade.php')
+        );
+        $this->copy(
+            $this->stubsPath('livewire/resources/views/livewire/auth/login.blade.php'),
+            resource_path('views/livewire/auth/login.blade.php')
+        );
 
         // Supporting components and partials
         (new Filesystem)->ensureDirectoryExists(resource_path('views/components/teams'));
         (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/views/components/teams'), resource_path('views/components/teams'));
 
+        // App layout components with team-switcher integrated
+        (new Filesystem)->ensureDirectoryExists(resource_path('views/components/layouts/app'));
+        $this->copy($this->stubsPath('livewire/resources/views/components/layouts/app/header.blade.php'), resource_path('views/components/layouts/app/header.blade.php'));
+        $this->copy($this->stubsPath('livewire/resources/views/components/layouts/app/sidebar.blade.php'), resource_path('views/components/layouts/app/sidebar.blade.php'));
+
         (new Filesystem)->ensureDirectoryExists(resource_path('views/partials'));
-        (new Filesystem)->copy($this->stubsPath('livewire/resources/views/partials/teams-heading.blade.php'), resource_path('views/partials/teams-heading.blade.php'));
-    }
-
-    /**
-     * Publish auth file overrides with team invitation support.
-     */
-    protected function publishAuthOverrides()
-    {
-        info('Publishing auth file overrides with team invitation support...');
-
-        // Ensure auth directory exists
-        (new Filesystem)->ensureDirectoryExists(resource_path('views/livewire/auth'));
-
-        // Copy register override
-        copy(
-            $this->stubsPath('livewire/resources/views/livewire/auth/register.blade.php'),
-            resource_path('views/livewire/auth/register.blade.php')
-        );
-
-        // Copy login override
-        copy(
-            $this->stubsPath('livewire/resources/views/livewire/auth/login.blade.php'),
-            resource_path('views/livewire/auth/login.blade.php')
-        );
-
-        $this->components->info('Auth overrides published with team invitation support.');
+        $this->copy($this->stubsPath('livewire/resources/views/partials/teams-heading.blade.php'), resource_path('views/partials/teams-heading.blade.php'));
     }
 
     /**
@@ -249,7 +242,7 @@ class InstallCommand extends Command
 
         return ! (new Process($command, base_path(), ['COMPOSER_MEMORY_LIMIT' => '-1']))
             ->setTimeout(null)
-            ->run(function ($type, $output) {
+            ->run(function ($type, $output): void {
                 $this->output->write($output);
             });
     }
@@ -275,7 +268,7 @@ class InstallCommand extends Command
 
         return (new Process($command, base_path(), ['COMPOSER_MEMORY_LIMIT' => '-1']))
             ->setTimeout(null)
-            ->run(function ($type, $output) {
+            ->run(function ($type, $output): void {
                 $this->output->write($output);
             }) === 0;
     }
@@ -301,9 +294,25 @@ class InstallCommand extends Command
 
         return (new Process($command, base_path(), ['COMPOSER_MEMORY_LIMIT' => '-1']))
             ->setTimeout(null)
-            ->run(function ($type, $output) {
+            ->run(function ($type, $output): void {
                 $this->output->write($output);
             }) === 0;
+    }
+
+    /**
+     * Copy a file only if it doesn't exist at the destination, unless override is forced.
+     *
+     * @param  bool|null  $force
+     */
+    protected function copy(string $source, string $destination, $force = null): bool
+    {
+        $force = $force ?? $this->option('override');
+
+        if ($force || ! file_exists($destination)) {
+            return (new Filesystem)->copy($source, $destination);
+        }
+
+        return false;
     }
 
     /**
@@ -329,16 +338,6 @@ class InstallCommand extends Command
         return function_exists('Illuminate\Support\php_binary')
             ? \Illuminate\Support\php_binary()
             : ((new PhpExecutableFinder)->find(false) ?: 'php');
-    }
-
-    /**
-     * Determine whether the project is already using Pest.
-     *
-     * @return bool
-     */
-    protected function isUsingPest()
-    {
-        return class_exists(\Pest\TestSuite::class);
     }
 
     protected function detectFrontendStack()

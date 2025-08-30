@@ -65,7 +65,7 @@ class InviteTeamMember implements InvitesTeamMembers
         return array_filter([
             'email' => [
                 'required', 'email',
-                Rule::unique(Teams::teamInvitationModel())->where(function (Builder $query) use ($team) {
+                Rule::unique(Teams::teamInvitationModel())->where(function (Builder $query) use ($team): void {
                     $query->where('team_id', $team->id);
                 }),
             ],
@@ -80,7 +80,7 @@ class InviteTeamMember implements InvitesTeamMembers
      */
     protected function ensureUserIsNotAlreadyOnTeam($team, string $email): Closure
     {
-        return function ($validator) use ($team, $email) {
+        return function ($validator) use ($team, $email): void {
             $validator->errors()->addIf(
                 $team->hasUserWithEmail($email),
                 'email',
