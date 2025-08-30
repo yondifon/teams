@@ -1,23 +1,32 @@
-@component('mail::message')
-{{ __('You have been invited to join the :team team!', ['team' => $invitation->team->name]) }}
+<x-mail::message>
+@if($invitation->expires_at && $invitation->expires_at->isPast())
+# Invitation Expired
 
-@if (config('teams.registration_enabled', true))
-{{ __('If you do not have an account, you may create one by clicking the button below. After creating an account, you may click the invitation acceptance button in this email to accept the team invitation:') }}
+Your invitation to join **{{ $invitation->team->name }}** has expired.
 
-@component('mail::button', ['url' => route('register')])
-{{ __('Create Account') }}
-@endcomponent
-
-{{ __('If you already have an account, you may accept this invitation by clicking the button below:') }}
-
+@if($invitedByName)
+Contact {{ $invitedByName }} for a new invitation.
 @else
-{{ __('You may accept this invitation by clicking the button below:') }}
+Contact the team administrator for a new invitation.
+@endif
+@else
+# Join {{ $invitation->team->name }}
+
+@if($invitedByName)
+{{ $invitedByName }} invited you to join their team and start collaborating.
+@else
+You've been invited to collaborate with this team.
 @endif
 
+<x-mail::button :url="$acceptUrl">
+Join Team
+</x-mail::button>
 
-@component('mail::button', ['url' => $acceptUrl])
-{{ __('Accept Invitation') }}
-@endcomponent
+@if($invitation->expires_at)
+**Expires {{ $invitation->expires_at->format('M j, Y') }}**
+@endif
+@endif
 
-{{ __('If you did not expect to receive an invitation to this team, you may discard this email.') }}
-@endcomponent
+Thanks,<br>
+{{ config('app.name') }}
+</x-mail::message>
