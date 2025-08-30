@@ -1,5 +1,13 @@
 # Release Notes
 
+## 0.1.0 - 2025-08-30
+
+### What's Changed
+
+* Refactor and improve helper methods by [@yondifon](https://github.com/yondifon) in https://github.com/yondifon/teams/pull/3
+
+**Full Changelog**: https://github.com/yondifon/teams/compare/0.0.6...0.1.0
+
 ## 0.0.6 - 2025-08-30
 
 **Full Changelog**: https://github.com/yondifon/teams/compare/0.0.5...0.0.6
