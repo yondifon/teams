@@ -23,6 +23,7 @@ class TeamsServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Contracts\CreatesTeams::class, Actions\CreateTeam::class);
         $this->app->singleton(Contracts\InvitesTeamMembers::class, Actions\InviteTeamMember::class);
+        $this->app->singleton(Contracts\SendsTeamInvitations::class, Actions\SendTeamInvitation::class);
         $this->app->singleton(Contracts\AcceptsTeamInvitations::class, Actions\AcceptTeamInvitation::class);
         $this->app->singleton(Contracts\DeclinesTeamInvitations::class, Actions\DeclineTeamInvitation::class);
         $this->app->singleton(Contracts\AddsTeamMembers::class, Actions\AddTeamMember::class);

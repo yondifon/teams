@@ -2,6 +2,7 @@
 
 use Malico\Teams\Contracts\UpdatesTeamNames;
 use Livewire\Volt\Component;
+use Illuminate\Support\Facades\Gate;
 
 new class extends Component {
     public $name = '';
@@ -18,6 +19,8 @@ new class extends Component {
         if (!$team) {
             return;
         }
+
+        Gate::authorize('updateTeamName', $team);
 
         app(UpdatesTeamNames::class)->update(
             auth()->user(),
@@ -37,7 +40,7 @@ new class extends Component {
     <x-teams.layout
         :heading="__('Team Settings')"
         :subheading="__('Manage your team information and preferences')"
-        permission="settings.view"
+        permission="team:update"
     >
         <form wire:submit="updateTeamInformation" class="my-6 w-full space-y-6">
             <flux:input wire:model="name" :label="__('Team Name')" type="text" required autofocus />

@@ -49,7 +49,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
     private function extraEmailRule()
     {
         if ($this->pendingInvitation) {
-            return function ($attribute, $value, $fail) {
+            return function ($attribute, $value, $fail): void {
                 if ($value !== $this->pendingInvitation->email) {
                     $fail(__('Email must match the invitation email: :email', ['email' => $this->pendingInvitation->email]));
                 }
@@ -119,7 +119,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             required
             autocomplete="email"
             placeholder="email@example.com"
-            :readonly="$pendingInvitation"
+            :readonly="(bool) $pendingInvitation"
             :variant="$pendingInvitation ? 'filled' : null"
             :description="$pendingInvitation ? __('Email address from your team invitation') : null"
         />

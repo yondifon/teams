@@ -6,7 +6,7 @@ use Malico\Teams\Http\Controllers\Inertia\TeamController;
 use Malico\Teams\Http\Controllers\Inertia\TeamMemberController;
 use Malico\Teams\Http\Controllers\TeamInvitationController;
 
-Route::group(['middleware' => ['auth', 'verified']], function () {
+Route::group(['middleware' => ['auth', 'verified']], function (): void {
     // Teams...
     Route::get('/teams/create', [TeamController::class, 'create'])->name('teams.create');
     Route::post('/teams', [TeamController::class, 'store'])->name('teams.store');

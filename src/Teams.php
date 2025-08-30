@@ -8,6 +8,7 @@ use Malico\Teams\Contracts\CreatesTeams;
 use Malico\Teams\Contracts\DeletesTeams;
 use Malico\Teams\Contracts\InvitesTeamMembers;
 use Malico\Teams\Contracts\RemovesTeamMembers;
+use Malico\Teams\Contracts\SendsTeamInvitations;
 use Malico\Teams\Contracts\UpdatesTeamNames;
 
 class Teams
@@ -312,6 +313,16 @@ class Teams
     public static function inviteTeamMembersUsing(string $class)
     {
         return app()->singleton(InvitesTeamMembers::class, $class);
+    }
+
+    /**
+     * Register a class / callback that should be used to send team invitations.
+     *
+     * @return void
+     */
+    public static function sendTeamInvitationsUsing(string $class)
+    {
+        return app()->singleton(SendsTeamInvitations::class, $class);
     }
 
     /**

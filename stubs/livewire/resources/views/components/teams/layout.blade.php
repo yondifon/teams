@@ -1,6 +1,7 @@
 @props([
     'heading' => null,
     'subheading' => null,
+    'permission' => null,
 ])
 
 <div class="flex items-start max-md:flex-col">
@@ -17,7 +18,14 @@
         <flux:separator class="md:hidden" />
 
         <div class="mt-5 w-full max-w-lg">
-            {{ $slot }}
+            @if(!$permission || auth()->user()->hasCurrentTeamPermission($permission))
+                {{ $slot }}
+            @else
+                <flux:callout>
+                    <flux:callout.heading>{{ __('Permission Denied') }}</flux:callout.heading>
+                    <flux:callout.text>{{ __('You do not have permission to view this page.') }}</flux:callout.text>
+                </flux:callout>
+            @endif
         </div>
     </div>
 </div>

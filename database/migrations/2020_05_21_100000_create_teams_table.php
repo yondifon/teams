@@ -23,7 +23,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('team_id');
             $table->foreignId('user_id');
-            $table->string('role')->nullable();
+            $table->string('role')->nullable()->index();
             $table->foreignId('invited_by_id')->nullable()->index();
             $table->timestamps();
 
@@ -35,7 +35,7 @@ return new class extends Migration
             $table->foreignId('team_id')->constrained()->cascadeOnDelete();
             $table->string('email');
             $table->string('role')->nullable();
-            $table->timestamp('expires_at')->nullable();
+            $table->timestamp('expires_at')->nullable()->index();
             $table->foreignId('invited_by_id')->nullable()->index();
             $table->timestamps();
 

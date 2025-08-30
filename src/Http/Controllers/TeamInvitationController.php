@@ -49,13 +49,13 @@ class TeamInvitationController extends Controller
 
         if ($userExists) {
             return redirect()->signedRoute('login', [
-                'invitation' => $invitation->id
-            ])->with('message', __('Please sign in to accept your team invitation.'));
+                'invitation' => $invitation->id,
+            ], $invitation->expires_at)->with('message', __('Please sign in to accept your team invitation.'));
         }
 
         return redirect()->signedRoute('register', [
-            'invitation' => $invitation->id
-        ])->with('message', __('Create an account to join the team.'));
+            'invitation' => $invitation->id,
+        ], $invitation->expires_at)->with('message', __('Create an account to join the team.'));
     }
 
     /**
