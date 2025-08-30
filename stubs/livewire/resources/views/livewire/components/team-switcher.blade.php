@@ -13,8 +13,8 @@ new class extends Component {
 }; ?>
 
 <flux:dropdown align="end">
-    <flux:button key='{{ auth()->user()->currentTeam->name  }}' variant="ghost" size="sm" icon:trailing="chevron-up-down" class="flex items-center gap-2">
-        <span class="max-w-[120px] truncate">{{ auth()->user()->currentTeam?->name ?? 'No Team' }}</span>
+    <flux:button key='{{ auth()->user()->currentTeam?->name  }}' variant="ghost" size="sm" icon:trailing="chevron-up-down" class="flex w-full gap-2">
+        {{ auth()->user()->currentTeam?->name ?? 'No Team' }}
     </flux:button>
 
     <flux:menu>
@@ -22,15 +22,24 @@ new class extends Component {
             <flux:menu.item
                 :disabled="auth()->user()->current_team_id === $team->id"
                 wire:click="switchTeam({{ $team->id }})"
+                type="button"
                 class="flex items-center justify-between {{ auth()->user()->currentTeam?->id === $team->id ? 'bg-subtle' : '' }}"
                 :icon:trailing="auth()->user()->current_team_id === $team->id ? 'check' : null"
             >
-                <span class="truncate">{{ $team->name }}</span>
+               {{ $team->name }}
             </flux:menu.item>
+
+            @if($loop->last)
+                <flux:menu.separator />
+            @endif
         @empty
-            <flux:menu.item disabled>
-                {{ __('No teams available') }}
+            <flux:menu.item disabled class="text-center py-3">
+                {{ __('No teams yet') }}
             </flux:menu.item>
         @endforelse
+
+        <flux:menu.item icon="plus" :href="route('teams.create')" wire:navigate>
+            {{ __('Create Team') }}
+        </flux:menu.item>
     </flux:menu>
 </flux:dropdown>
