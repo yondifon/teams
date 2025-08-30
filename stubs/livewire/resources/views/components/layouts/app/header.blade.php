@@ -20,8 +20,6 @@
 
             <flux:spacer />
 
-            <livewire:components.team-switcher />
-
             <flux:navbar class="me-1.5 space-x-0.5 rtl:space-x-reverse py-0!">
                 <flux:tooltip :content="__('Search')" position="bottom">
                     <flux:navbar.item class="!h-10 [&>div>svg]:size-5" icon="magnifying-glass" href="#" :label="__('Search')" />
@@ -45,6 +43,8 @@
                     />
                 </flux:tooltip>
             </flux:navbar>
+
+            <livewire:components.team-switcher />
 
             <!-- Desktop User Menu -->
             <flux:dropdown position="top" align="end">
