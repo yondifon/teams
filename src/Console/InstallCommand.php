@@ -130,8 +130,8 @@ class InstallCommand extends Command
         info('Installing Volt functional components for teams');
 
         // Volt functional components go in resources/views/pages/
-        (new Filesystem)->ensureDirectoryExists(resource_path('views/pages/teams'));
-        (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/views/livewire/teams'), resource_path('views/pages/teams'));
+        (new Filesystem)->ensureDirectoryExists(resource_path('views/livewire'));
+        (new Filesystem)->copyDirectory($this->stubsPath('livewire/resources/views/livewire/teams'), resource_path('views/livewire/teams'));
 
         // Override auth files if requested
         if ($this->option('override')) {
