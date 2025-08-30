@@ -198,29 +198,7 @@ class InstallCommand extends Command
 
     protected function addTeamsRequireToWebPhp()
     {
-        $webRoutes = file_get_contents(base_path('routes/web.php'));
 
-        return $this->findBestInsertionPoint($webRoutes)
-            ? $this->insertAfterOpeningTag()
-            : $this->appendToEndOfFile();
-    }
-
-    protected function findBestInsertionPoint($webRoutes)
-    {
-        return str_contains($webRoutes, '<?php');
-    }
-
-    protected function insertAfterOpeningTag()
-    {
-        $this->replaceInFile(
-            '<?php',
-            '<?php'.PHP_EOL.PHP_EOL."require __DIR__.'/teams.php';",
-            base_path('routes/web.php')
-        );
-    }
-
-    protected function appendToEndOfFile()
-    {
         file_put_contents(
             base_path('routes/web.php'),
             PHP_EOL.PHP_EOL."require __DIR__.'/teams.php';".PHP_EOL,
@@ -235,13 +213,6 @@ class InstallCommand extends Command
     {
         return __DIR__.'/../../stubs'.($path ? '/'.$path : '');
     }
-
-    /**
-     * Returns the path to the correct test stubs.
-     *
-     * @return string
-     */
-    protected function getTestStubsPath() {}
 
     /**
      * Determine if the given Composer package is installed.
