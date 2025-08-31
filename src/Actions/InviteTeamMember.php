@@ -4,6 +4,7 @@ namespace Malico\Teams\Actions;
 
 use Closure;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -34,6 +35,8 @@ class InviteTeamMember implements InvitesTeamMembers
         $invitation = $team->invitations()->create([
             'email' => $email,
             'role' => $role,
+            'invited_by_id' => $user->id,
+            'expires_at' => Carbon::now()->addDays(Teams::invitationDuration()),
         ]);
 
         $this->sendsTeamInvitations->send($invitation);

@@ -18,9 +18,7 @@ class UpdateTeamMemberRole implements UpdatesTeamMemberRoles
     {
         Gate::forUser($user)->authorize('updateTeamMember', $team);
 
-        Validator::make([
-            'role' => $role,
-        ], [
+        Validator::make(['role' => $role], [
             'role' => ['required', 'string', new Role],
         ])->validate();
 

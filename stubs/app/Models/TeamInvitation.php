@@ -18,5 +18,18 @@ class TeamInvitation extends BaseTeamInvitation
         'email',
         'role',
         'invited_by_id',
+        'expires_at',
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'expires_at' => 'datetime',
+        ];
+    }
 }
