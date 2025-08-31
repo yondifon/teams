@@ -9,8 +9,8 @@ use Illuminate\Validation\ValidationException;
 use Malico\Teams\Actions\InviteTeamMember;
 use Malico\Teams\Events\InvitingTeamMember;
 use Malico\Teams\Mail\TeamInvitation;
-use Malico\Teams\Tests\TestCase;
 use Malico\Teams\Teams;
+use Malico\Teams\Tests\TestCase;
 
 class InviteTeamMemberTest extends TestCase
 {
