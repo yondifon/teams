@@ -1,5 +1,14 @@
 # Release Notes
 
+## 0.1.1 - 2025-08-31
+
+### What's Changed
+
+* Invited by and expiration time by [@yondifon](https://github.com/yondifon) in https://github.com/yondifon/teams/pull/4
+* invited by and expiration time by [@yondifon](https://github.com/yondifon) in https://github.com/yondifon/teams/pull/5
+
+**Full Changelog**: https://github.com/yondifon/teams/compare/0.1.0...0.1.1
+
 ## 0.1.0 - 2025-08-30
 
 ### What's Changed
