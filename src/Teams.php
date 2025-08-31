@@ -57,10 +57,8 @@ class Teams
 
     /**
      * The number of days team invitations are valid for.
-     *
-     * @var int
      */
-    public static $invitationDuration = 7;
+    public static ?int $invitationDuration = 7;
 
     /**
      * Determine if Teams has registered roles.
@@ -280,9 +278,9 @@ class Teams
      *
      * @return void
      */
-    public static function createTeamsUsing(string $class)
+    public static function createTeamsUsing(string $class): void
     {
-        return app()->singleton(CreatesTeams::class, $class);
+        app()->singleton(CreatesTeams::class, $class);
     }
 
     /**
@@ -290,9 +288,9 @@ class Teams
      *
      * @return void
      */
-    public static function updateTeamNamesUsing(string $class)
+    public static function updateTeamNamesUsing(string $class): void
     {
-        return app()->singleton(UpdatesTeamNames::class, $class);
+        app()->singleton(UpdatesTeamNames::class, $class);
     }
 
     /**
@@ -300,9 +298,9 @@ class Teams
      *
      * @return void
      */
-    public static function addTeamMembersUsing(string $class)
+    public static function addTeamMembersUsing(string $class): void
     {
-        return app()->singleton(AddsTeamMembers::class, $class);
+        app()->singleton(AddsTeamMembers::class, $class);
     }
 
     /**
@@ -310,9 +308,9 @@ class Teams
      *
      * @return void
      */
-    public static function inviteTeamMembersUsing(string $class)
+    public static function inviteTeamMembersUsing(string $class): void
     {
-        return app()->singleton(InvitesTeamMembers::class, $class);
+        app()->singleton(InvitesTeamMembers::class, $class);
     }
 
     /**
@@ -320,9 +318,9 @@ class Teams
      *
      * @return void
      */
-    public static function sendTeamInvitationsUsing(string $class)
+    public static function sendTeamInvitationsUsing(string $class): void
     {
-        return app()->singleton(SendsTeamInvitations::class, $class);
+        app()->singleton(SendsTeamInvitations::class, $class);
     }
 
     /**
@@ -330,9 +328,9 @@ class Teams
      *
      * @return void
      */
-    public static function acceptTeamInvitationsUsing(string $class)
+    public static function acceptTeamInvitationsUsing(string $class): void
     {
-        return app()->singleton(\Malico\Teams\Contracts\AcceptsTeamInvitations::class, $class);
+        app()->singleton(\Malico\Teams\Contracts\AcceptsTeamInvitations::class, $class);
     }
 
     /**
@@ -340,9 +338,9 @@ class Teams
      *
      * @return void
      */
-    public static function declineTeamInvitationsUsing(string $class)
+    public static function declineTeamInvitationsUsing(string $class): void
     {
-        return app()->singleton(\Malico\Teams\Contracts\DeclinesTeamInvitations::class, $class);
+        app()->singleton(\Malico\Teams\Contracts\DeclinesTeamInvitations::class, $class);
     }
 
     /**
@@ -350,9 +348,9 @@ class Teams
      *
      * @return void
      */
-    public static function updateTeamMemberRolesUsing(string $class)
+    public static function updateTeamMemberRolesUsing(string $class): void
     {
-        return app()->singleton(\Malico\Teams\Contracts\UpdatesTeamMemberRoles::class, $class);
+        app()->singleton(\Malico\Teams\Contracts\UpdatesTeamMemberRoles::class, $class);
     }
 
     /**
@@ -360,9 +358,9 @@ class Teams
      *
      * @return void
      */
-    public static function validateTeamDeletionUsing(string $class)
+    public static function validateTeamDeletionUsing(string $class): void
     {
-        return app()->singleton(\Malico\Teams\Contracts\ValidatesTeamDeletion::class, $class);
+        app()->singleton(\Malico\Teams\Contracts\ValidatesTeamDeletion::class, $class);
     }
 
     /**
@@ -370,9 +368,9 @@ class Teams
      *
      * @return void
      */
-    public static function removeTeamMembersUsing(string $class)
+    public static function removeTeamMembersUsing(string $class): void
     {
-        return app()->singleton(RemovesTeamMembers::class, $class);
+        app()->singleton(RemovesTeamMembers::class, $class);
     }
 
     /**
@@ -380,9 +378,9 @@ class Teams
      *
      * @return void
      */
-    public static function deleteTeamsUsing(string $class)
+    public static function deleteTeamsUsing(string $class): void
     {
-        return app()->singleton(DeletesTeams::class, $class);
+        app()->singleton(DeletesTeams::class, $class);
     }
 
     /**
@@ -393,17 +391,5 @@ class Teams
     public static function invitationDuration()
     {
         return static::$invitationDuration;
-    }
-
-    /**
-     * Set the number of days team invitations are valid for.
-     *
-     * @return static
-     */
-    public static function invitationDurationDays(int $days)
-    {
-        static::$invitationDuration = $days;
-
-        return new static;
     }
 }

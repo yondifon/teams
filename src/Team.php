@@ -3,15 +3,16 @@
 namespace Malico\Teams;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 abstract class Team extends Model
 {
     /**
      * Get the owner of the team.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function owner()
+    public function owner(): BelongsTo
     {
         return $this->belongsTo(Teams::userModel(), 'user_id');
     }
@@ -28,13 +29,11 @@ abstract class Team extends Model
 
     /**
      * Get all of the users that belong to the team.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
-    public function users()
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(Teams::userModel(), Teams::membershipModel())
-            ->withPivot('role')
+            ->withPivot(['role', 'invited_by_id'])
             ->withTimestamps()
             ->as('membership');
     }
@@ -43,19 +42,16 @@ abstract class Team extends Model
      * Determine if the given user belongs to the team.
      *
      * @param  \App\Models\User  $user
-     * @return bool
      */
-    public function hasUser($user)
+    public function hasUser($user): bool
     {
         return $this->users->contains($user) || $user->ownsTeam($this);
     }
 
     /**
      * Determine if the given email address belongs to a user on the team.
-     *
-     * @return bool
      */
-    public function hasUserWithEmail(string $email)
+    public function hasUserWithEmail(string $email): bool
     {
         return $this->allUsers()->contains(function ($user) use ($email) {
             return $user->email === $email;
@@ -67,19 +63,16 @@ abstract class Team extends Model
      *
      * @param  \App\Models\User  $user
      * @param  string  $permission
-     * @return bool
      */
-    public function userHasPermission($user, $permission)
+    public function userHasPermission($user, $permission): bool
     {
         return $user->hasTeamPermission($this, $permission);
     }
 
     /**
      * Get all of the pending user invitations for the team.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
-    public function invitations()
+    public function invitations(): HasMany
     {
         return $this->hasMany(Teams::teamInvitationModel());
     }
@@ -88,9 +81,8 @@ abstract class Team extends Model
      * Remove the given user from the team.
      *
      * @param  \App\Models\User  $user
-     * @return void
      */
-    public function removeUser($user)
+    public function removeUser($user): void
     {
         if ($user->current_team_id === $this->id) {
             $user->forceFill([
@@ -103,10 +95,8 @@ abstract class Team extends Model
 
     /**
      * Purge all of the team's resources.
-     *
-     * @return void
      */
-    public function purge()
+    public function purge(): void
     {
         $this->owner()->where('current_team_id', $this->id)
             ->update(['current_team_id' => null]);
