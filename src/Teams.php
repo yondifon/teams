@@ -185,14 +185,10 @@ class Teams
 
     /**
      * Specify the user model that should be used by Teams.
-     *
-     * @return static
      */
-    public static function useUserModel(string $model)
+    public static function useUserModel(string $model): void
     {
         static::$userModel = $model;
-
-        return new static;
     }
 
     /**
@@ -219,14 +215,10 @@ class Teams
 
     /**
      * Specify the team model that should be used by Teams.
-     *
-     * @return static
      */
-    public static function useTeamModel(string $model)
+    public static function useTeamModel(string $model): void
     {
         static::$teamModel = $model;
-
-        return new static;
     }
 
     /**
@@ -241,14 +233,10 @@ class Teams
 
     /**
      * Specify the membership model that should be used by Teams.
-     *
-     * @return static
      */
-    public static function useMembershipModel(string $model)
+    public static function useMembershipModel(string $model): void
     {
         static::$membershipModel = $model;
-
-        return new static;
     }
 
     /**
@@ -263,20 +251,14 @@ class Teams
 
     /**
      * Specify the team invitation model that should be used by Teams.
-     *
-     * @return static
      */
-    public static function useTeamInvitationModel(string $model)
+    public static function useTeamInvitationModel(string $model): void
     {
         static::$teamInvitationModel = $model;
-
-        return new static;
     }
 
     /**
      * Register a class / callback that should be used to create teams.
-     *
-     * @return void
      */
     public static function createTeamsUsing(string $class): void
     {
@@ -285,8 +267,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to update team names.
-     *
-     * @return void
      */
     public static function updateTeamNamesUsing(string $class): void
     {
@@ -295,8 +275,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to add team members.
-     *
-     * @return void
      */
     public static function addTeamMembersUsing(string $class): void
     {
@@ -305,8 +283,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to invite team members.
-     *
-     * @return void
      */
     public static function inviteTeamMembersUsing(string $class): void
     {
@@ -315,8 +291,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to send team invitations.
-     *
-     * @return void
      */
     public static function sendTeamInvitationsUsing(string $class): void
     {
@@ -325,8 +299,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to accept team invitations.
-     *
-     * @return void
      */
     public static function acceptTeamInvitationsUsing(string $class): void
     {
@@ -335,8 +307,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to decline team invitations.
-     *
-     * @return void
      */
     public static function declineTeamInvitationsUsing(string $class): void
     {
@@ -345,8 +315,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to update team member roles.
-     *
-     * @return void
      */
     public static function updateTeamMemberRolesUsing(string $class): void
     {
@@ -355,8 +323,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to validate team deletion.
-     *
-     * @return void
      */
     public static function validateTeamDeletionUsing(string $class): void
     {
@@ -365,8 +331,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to remove team members.
-     *
-     * @return void
      */
     public static function removeTeamMembersUsing(string $class): void
     {
@@ -375,8 +339,6 @@ class Teams
 
     /**
      * Register a class / callback that should be used to delete teams.
-     *
-     * @return void
      */
     public static function deleteTeamsUsing(string $class): void
     {
@@ -391,5 +353,13 @@ class Teams
     public static function invitationDuration()
     {
         return static::$invitationDuration;
+    }
+
+    /**
+     * Set the number of days team invitations are valid for.
+     */
+    public static function useInvitationDuration(?int $days): void
+    {
+        static::$invitationDuration = $days;
     }
 }
