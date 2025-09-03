@@ -91,7 +91,7 @@ class InstallCommand extends Command
     {
         // Service Providers...
         $this->copy($this->stubsPath('app/Providers/TeamsServiceProvider.php'), app_path('Providers/TeamsServiceProvider.php'));
-        ServiceProvider::addProviderToBootstrapFile('App\Providers\TeamsServiceProvider');
+        ServiceProvider::addProviderToBootstrapFile(\App\Providers\TeamsServiceProvider::class);
 
         $this->callSilent('vendor:publish', ['--tag' => 'teams-migrations', '--force' => true]);
 
@@ -224,10 +224,9 @@ class InstallCommand extends Command
     /**
      * Installs the given Composer Packages into the application.
      *
-     * @param  mixed  $packages
      * @return bool
      */
-    protected function requireComposerPackages($packages)
+    protected function requireComposerPackages(mixed $packages)
     {
         $composer = $this->option('composer');
 
@@ -250,10 +249,9 @@ class InstallCommand extends Command
     /**
      * Removes the given Composer Packages as "dev" dependencies.
      *
-     * @param  mixed  $packages
      * @return bool
      */
-    protected function removeComposerDevPackages($packages)
+    protected function removeComposerDevPackages(mixed $packages)
     {
         $composer = $this->option('composer');
 
@@ -276,10 +274,9 @@ class InstallCommand extends Command
     /**
      * Install the given Composer Packages as "dev" dependencies.
      *
-     * @param  mixed  $packages
      * @return bool
      */
-    protected function requireComposerDevPackages($packages)
+    protected function requireComposerDevPackages(mixed $packages)
     {
         $composer = $this->option('composer');
 
@@ -306,7 +303,7 @@ class InstallCommand extends Command
      */
     protected function copy(string $source, string $destination, $force = null): bool
     {
-        $force = $force ?? $this->option('override');
+        $force ??= $this->option('override');
 
         if ($force || ! file_exists($destination)) {
             return (new Filesystem)->copy($source, $destination);

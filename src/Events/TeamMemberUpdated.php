@@ -10,9 +10,6 @@ class TeamMemberUpdated
 
     /**
      * Create a new event instance.
-     *
-     * @param  mixed  $team
-     * @param  mixed  $user
      */
-    public function __construct(public $team, public $user) {}
+    public function __construct(public mixed $team, public mixed $user) {}
 }

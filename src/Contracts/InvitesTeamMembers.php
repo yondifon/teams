@@ -8,7 +8,6 @@ interface InvitesTeamMembers
      * Invite a new team member to the given team.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  mixed  $team
      */
-    public function invite($user, $team, string $email, ?string $role = null);
+    public function invite($user, mixed $team, string $email, ?string $role = null);
 }

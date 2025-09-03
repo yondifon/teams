@@ -20,8 +20,8 @@ class Permission
             }
 
             // Wildcard support: users:*, users:create
-            if (str_ends_with($perm, '*')) {
-                $base = rtrim($perm, '*');
+            if (str_ends_with((string) $perm, '*')) {
+                $base = rtrim((string) $perm, '*');
                 if (str_starts_with($permission, $base)) {
                     return true;
                 }

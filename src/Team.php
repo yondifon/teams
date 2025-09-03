@@ -45,7 +45,11 @@ abstract class Team extends Model
      */
     public function hasUser($user): bool
     {
-        return $this->users->contains($user) || $user->ownsTeam($this);
+        if ($this->users->contains($user)) {
+            return true;
+        }
+
+        return $user->ownsTeam($this);
     }
 
     /**
@@ -53,9 +57,7 @@ abstract class Team extends Model
      */
     public function hasUserWithEmail(string $email): bool
     {
-        return $this->allUsers()->contains(function ($user) use ($email) {
-            return $user->email === $email;
-        });
+        return $this->allUsers()->contains(fn ($user) => $user->email === $email);
     }
 
     /**

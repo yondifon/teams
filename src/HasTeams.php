@@ -9,10 +9,8 @@ trait HasTeams
 {
     /**
      * Determine if the given team is the current team.
-     *
-     * @param  mixed  $team
      */
-    public function isCurrentTeam($team): bool
+    public function isCurrentTeam(mixed $team): bool
     {
         return $team->id === $this->currentTeam->id;
     }
@@ -33,10 +31,8 @@ trait HasTeams
 
     /**
      * Switch the user's context to the given team.
-     *
-     * @param  mixed  $team
      */
-    public function switchTeam($team): bool
+    public function switchTeam(mixed $team): bool
     {
         if (! $team) {
             return false;
@@ -96,10 +92,8 @@ trait HasTeams
 
     /**
      * Determine if the user owns the given team.
-     *
-     * @param  mixed  $team
      */
-    public function ownsTeam($team): bool
+    public function ownsTeam(mixed $team): bool
     {
         if (is_null($team)) {
             return false;
@@ -110,26 +104,23 @@ trait HasTeams
 
     /**
      * Determine if the user belongs to the given team.
-     *
-     * @param  mixed  $team
      */
-    public function belongsToTeam($team): bool
+    public function belongsToTeam(mixed $team): bool
     {
         if (is_null($team)) {
             return false;
         }
+        if ($this->ownsTeam($team)) {
+            return true;
+        }
 
-        return $this->ownsTeam($team) || $this->teams->contains(function ($t) use ($team) {
-            return $t->id === $team->id;
-        });
+        return (bool) $this->teams->contains(fn ($t) => $t->id === $team->id);
     }
 
     /**
      * Get the role that the user has on the team.
-     *
-     * @param  mixed  $team
      */
-    public function teamRole($team): ?Role
+    public function teamRole(mixed $team): ?Role
     {
         if ($this->ownsTeam($team)) {
             return new OwnerRole;
@@ -148,10 +139,8 @@ trait HasTeams
 
     /**
      * Determine if the user has the given role on the given team.
-     *
-     * @param  mixed  $team
      */
-    public function hasTeamRole($team, string $role): bool
+    public function hasTeamRole(mixed $team, string $role): bool
     {
         if ($this->ownsTeam($team)) {
             return true;
@@ -169,10 +158,8 @@ trait HasTeams
 
     /**
      * Get the user's permissions for the given team.
-     *
-     * @param  mixed  $team
      */
-    public function teamPermissions($team): array
+    public function teamPermissions(mixed $team): array
     {
         if ($this->ownsTeam($team)) {
             return ['*'];
@@ -187,10 +174,8 @@ trait HasTeams
 
     /**
      * Determine if the user has the given permission on the given team.
-     *
-     * @param  mixed  $team
      */
-    public function hasTeamPermission($team, string $permission): bool
+    public function hasTeamPermission(mixed $team, string $permission): bool
     {
         if ($this->ownsTeam($team)) {
             return true;

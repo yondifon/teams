@@ -8,7 +8,6 @@ interface DeclinesTeamInvitations
      * Decline the given team invitation.
      *
      * @param  \Illuminate\Contracts\Auth\Authenticatable  $user
-     * @param  mixed  $invitation
      */
-    public function decline($user, $invitation): void;
+    public function decline($user, mixed $invitation): void;
 }

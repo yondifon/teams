@@ -10,10 +10,6 @@ class InvitingTeamMember
 
     /**
      * Create a new event instance.
-     *
-     * @param  mixed  $team
-     * @param  mixed  $email
-     * @param  mixed  $role
      */
-    public function __construct(public $team, public $email, public $role) {}
+    public function __construct(public mixed $team, public mixed $email, public mixed $role) {}
 }

@@ -11,7 +11,6 @@ use Malico\Teams\Events\InvitingTeamMember;
 use Malico\Teams\Mail\TeamInvitation;
 use Malico\Teams\Teams;
 use Malico\Teams\Tests\TestCase;
-use Malico\Teams\Teams;
 
 class InviteTeamMemberTest extends TestCase
 {

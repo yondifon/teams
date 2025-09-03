@@ -32,28 +32,28 @@ class Teams
      *
      * @var string
      */
-    public static $userModel = 'App\\Models\\User';
+    public static $userModel = \App\Models\User::class;
 
     /**
      * The team model that should be used by Teams.
      *
      * @var string
      */
-    public static $teamModel = 'App\\Models\\Team';
+    public static $teamModel = \App\Models\Team::class;
 
     /**
      * The membership model that should be used by Teams.
      *
      * @var string
      */
-    public static $membershipModel = 'App\\Models\\Membership';
+    public static $membershipModel = \App\Models\Membership::class;
 
     /**
      * The team invitation model that should be used by Teams.
      *
      * @var string
      */
-    public static $teamInvitationModel = 'App\\Models\\TeamInvitation';
+    public static $teamInvitationModel = \App\Models\TeamInvitation::class;
 
     /**
      * The number of days team invitations are valid for.
