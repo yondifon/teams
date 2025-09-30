@@ -1,5 +1,9 @@
 # Release Notes
 
+## 0.1.2 - 2025-09-30
+
+**Full Changelog**: https://github.com/yondifon/teams/compare/0.1.1...0.1.2
+
 ## 0.1.1 - 2025-08-31
 
 ### What's Changed
