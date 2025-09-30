@@ -66,6 +66,12 @@ class InstallCommand extends Command
 
         info("Detected Inertia framework: {$framework}");
 
+        // Controllers...
+        (new Filesystem)->ensureDirectoryExists(app_path('Http/Controllers/Teams'));
+        $this->copy($this->stubsPath('app/Http/Controllers/Teams/TeamController.php'), app_path('Http/Controllers/Teams/TeamController.php'));
+        $this->copy($this->stubsPath('app/Http/Controllers/Teams/TeamMemberController.php'), app_path('Http/Controllers/Teams/TeamMemberController.php'));
+
+        // Pages...
         (new Filesystem)->ensureDirectoryExists(resource_path('js/pages/teams'));
 
         $reactStubsPath = $this->stubsPath('inertia/react/resources/js/pages/teams');
