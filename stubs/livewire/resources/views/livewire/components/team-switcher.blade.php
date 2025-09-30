@@ -13,7 +13,7 @@ new class extends Component {
 }; ?>
 
 <flux:dropdown align="end">
-    <flux:button key='{{ auth()->user()->currentTeam?->name  }}' variant="ghost" size="sm" icon:trailing="chevron-up-down" class="flex w-full gap-2">
+    <flux:button key='{{ auth()->user()->currentTeam?->name  }}' variant="ghost" size="sm" icon:trailing="chevron-up-down" class="w-full gap-2">
         {{ auth()->user()->currentTeam?->name ?? 'No Team' }}
     </flux:button>
 
@@ -23,7 +23,7 @@ new class extends Component {
                 :disabled="auth()->user()->current_team_id === $team->id"
                 wire:click="switchTeam({{ $team->id }})"
                 type="button"
-                class="flex items-center justify-between {{ auth()->user()->currentTeam?->id === $team->id ? 'bg-subtle' : '' }}"
+                class="{{ auth()->user()->currentTeam?->id === $team->id ? 'bg-subtle' : '' }}"
                 :icon:trailing="auth()->user()->current_team_id === $team->id ? 'check' : null"
             >
                {{ $team->name }}
