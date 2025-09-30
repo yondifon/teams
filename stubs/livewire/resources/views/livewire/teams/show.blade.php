@@ -20,7 +20,7 @@ new class extends Component {
             return;
         }
 
-        Gate::authorize('updateTeamName', $team);
+        Gate::authorize('update', $team);
 
         app(UpdatesTeamNames::class)->update(
             auth()->user(),
